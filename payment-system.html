@@ -355,14 +355,19 @@
                     <td>${formatValue(data.client)}</td>
                     <td>${formatValue(data.services?.[0]?.unitPrice, '0.00')}</td>
                     <td>${formatValue(data.total, '0.00')}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.taxAmount, '0.00')}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.totalWithTaxes, '0.00')}</td>
-                    <td>${formatValue(data.approvedBy, '-')}</td>
+                    <td>${data.hasTaxes ? `Inclus: ${formatValue(data.taxAmount, '0.00')}` : 'Non-Inclus'}</td>
+                    <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
+                    <td>
+                        <select class="form-select form-select-sm approver-select" data-id="${data.id}">
+                            <option value="">Sélectionner...</option>
+                            <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
+                            <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Eloise</option>
+                        </select>
+                    </td>
                     <td>
                         <select class="form-select form-select-sm status-select" data-id="${data.id}">
-                            <option value="paid" class="bg-success text-white" ${data.status === 'paid' ? 'selected' : ''}>Payé</option>
-                            <option value="unpaid" class="bg-danger text-white" ${data.status === 'unpaid' ? 'selected' : ''}>Non payé</option>
-                            <option value="pending" class="bg-warning" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
+                            <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
+                            <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
                         </select>
                     </td>
                     <td>${formatValue(data.paymentDate, '-')}</td>
