@@ -313,8 +313,8 @@
                     <td>${data.client}</td>
                     <td>${data.unitPrice}</td>
                     <td>${data.total}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${data.taxAmount}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${data.totalWithTaxes}</td>
+                    <td>${data.hasTaxes ? `Inclus: ${data.taxAmount}` : 'Non-Inclus'}</td>
+                    <td>${data.hasTaxes ? data.totalWithTaxes : data.total}</td>
                     <td>
                         <span class="badge bg-warning">En attente</span>
                     </td>
