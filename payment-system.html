@@ -91,31 +91,44 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Type de service</label>
-                                    <select class="form-select" required>
-                                        <option value="">Sélectionner...</option>
-                                        <option>Heure standard</option>
-                                        <option>Heure de tournage</option>
-                                        <option>Heure de montage</option>
-                                        <option>Vidéo TikTok</option>
-                                        <option>Vidéo Short</option>
-                                        <option>Vidéo YouTube</option>
-                                        <option>Déplacement (Km)</option>
-                                        <option>Prime de repas</option>
-                                        <option>Prime d'hébergement</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Quantité</label>
-                                    <input type="number" class="form-control" min="0" step="0.01" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Tarif unitaire</label>
-                                    <input type="number" class="form-control" min="0" step="0.01" required>
+                            <div id="servicesContainer">
+                                <div class="service-entry mb-3">
+                                    <div class="row mb-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Type de service</label>
+                                            <select class="form-select service-type" required>
+                                                <option value="">Sélectionner...</option>
+                                                <option>Heure standard</option>
+                                                <option>Heure de tournage</option>
+                                                <option>Heure de montage</option>
+                                                <option>Vidéo TikTok</option>
+                                                <option>Vidéo Short</option>
+                                                <option>Vidéo YouTube</option>
+                                                <option>Déplacement (Km)</option>
+                                                <option>Prime de repas</option>
+                                                <option>Prime d'hébergement</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Quantité</label>
+                                            <input type="number" class="form-control service-quantity" min="0" step="0.01" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Tarif unitaire</label>
+                                            <input type="number" class="form-control service-price" min="0" step="0.01" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-danger form-control remove-service" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
+                                <i class="bi bi-plus-circle"></i> Ajouter un service
+                            </button>
 
                             <div class="mb-3">
                                 <label class="form-label">Description/Justification</label>
@@ -225,19 +238,47 @@
 
         // Calcul automatique des montants
         function calculateAmounts() {
-            const quantity = parseFloat($('#quantity').val()) || 0;
-            const unitPrice = parseFloat($('#unitPrice').val()) || 0;
-            const total = quantity * unitPrice;
+            let total = 0;
             
-            $('#total').val(total.toFixed(2));
+            $('.service-entry').each(function() {
+                const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
+                const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
+                total += quantity * unitPrice;
+            });
             
             if ($('#taxCheck').is(':checked')) {
                 const taxes = total * 0.14975; // TPS (5%) + TVQ (9.975%)
                 const totalWithTaxes = total + taxes;
-                $('#taxAmount').val(taxes.toFixed(2));
-                $('#totalWithTaxes').val(totalWithTaxes.toFixed(2));
+                return {
+                    subtotal: total.toFixed(2),
+                    taxes: taxes.toFixed(2),
+                    total: totalWithTaxes.toFixed(2)
+                };
             }
+            
+            return {
+                subtotal: total.toFixed(2),
+                taxes: '0.00',
+                total: total.toFixed(2)
+            };
         }
+
+        // Gestion des services multiples
+        $('#addServiceBtn').click(function() {
+            const newService = $('.service-entry:first').clone();
+            newService.find('input').val('');
+            newService.find('select').val('');
+            newService.find('.remove-service').show();
+            $('#servicesContainer').append(newService);
+        });
+
+        $(document).on('click', '.remove-service', function() {
+            if ($('.service-entry').length > 1) {
+                $(this).closest('.service-entry').remove();
+            }
+        });
+
+        $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
 
         // Gestion des formulaires
         $('#newInvoiceForm').on('submit', function(e) {
