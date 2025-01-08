@@ -357,21 +357,15 @@
                     <td>${formatValue(data.total, '0.00')}</td>
                     <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.taxAmount, '0.00')}</td>
                     <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.totalWithTaxes, '0.00')}</td>
+                    <td>${formatValue(data.approvedBy, '-')}</td>
                     <td>
-                        <select class="form-select form-select-sm">
-                            <option>Joey</option>
-                            <option>Benoit-Xavier</option>
-                            <option>Éloïse</option>
+                        <select class="form-select form-select-sm status-select" data-id="${data.id}">
+                            <option value="paid" class="bg-success text-white" ${data.status === 'paid' ? 'selected' : ''}>Payé</option>
+                            <option value="unpaid" class="bg-danger text-white" ${data.status === 'unpaid' ? 'selected' : ''}>Non payé</option>
+                            <option value="pending" class="bg-warning" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
                         </select>
                     </td>
-                    <td>
-                        <select class="form-select form-select-sm status-select">
-                            <option value="paid" class="bg-success text-white">Oui</option>
-                            <option value="unpaid" class="bg-danger text-white">Non</option>
-                            <option value="pending" class="bg-warning">En attente</option>
-                        </select>
-                    </td>
-                    <td><input type="date" class="form-control form-control-sm"></td>
+                    <td>${formatValue(data.paymentDate, '-')}</td>
                 </tr>
             `;
             $('#invoiceTableBody').append(row);
