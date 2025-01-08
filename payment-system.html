@@ -45,6 +45,9 @@
                 <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#standardizeInvoiceModal">
                     Uniformiser une facture
                 </button>
+                <button class="btn btn-danger" id="clearPaymentsBtn">
+                    Vider la liste
+                </button>
             </div>
         </div>
 
@@ -242,6 +245,14 @@
         }
         
         loadInitialPayments();
+
+        // Gestion du bouton de réinitialisation
+        $('#clearPaymentsBtn').click(function() {
+            if (confirm('Êtes-vous sûr de vouloir vider la liste des paiements ?')) {
+                paymentManager.clearPayments();
+                $('#invoiceTableBody').empty();
+            }
+        });
 
         // Gestion de l'affichage des champs de taxes
         $('#taxCheck').change(function() {

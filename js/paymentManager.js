@@ -38,4 +38,9 @@ class PaymentManager {
         localStorage.setItem('payments', JSON.stringify(this.payments));
         return payment;
     }
+
+    clearPayments() {
+        this.payments = [];
+        localStorage.removeItem('payments');
+    }
 }
