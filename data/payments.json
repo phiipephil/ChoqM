@@ -1,0 +1,29 @@
+{
+    "payments": [
+        {
+            "id": "1",
+            "date": "2025-01-08",
+            "services": [
+                {
+                    "type": "Heure de tournage",
+                    "quantity": 3,
+                    "unitPrice": 25.00,
+                    "description": "Tournage vidéo promotionnelle"
+                }
+            ],
+            "client": "CHOQ MÉDIA",
+            "total": 75.00,
+            "taxAmount": 11.23,
+            "totalWithTaxes": 86.23,
+            "status": "pending",
+            "approvedBy": null,
+            "paymentDate": null,
+            "hasTaxes": true,
+            "taxInfo": {
+                "neq": "1234567890",
+                "tps": "123456789RT0001",
+                "tvq": "1234567890TQ0001"
+            }
+        }
+    ]
+}
