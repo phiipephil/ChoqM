@@ -157,7 +157,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="newInvoiceForm" class="btn btn-primary">Générer</button>
+                        <button type="submit" form="newInvoiceForm" class="btn btn-primary" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            <span class="btn-text">Générer</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -224,11 +227,79 @@
         $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
 
         // Gestion des formulaires
-        $('#newInvoiceForm').on('submit', function(e) {
+        $('#newInvoiceForm').on('submit', async function(e) {
             e.preventDefault();
-            // Logique de soumission du formulaire
-            addInvoiceRow(/* données du formulaire */);
-            $('#newInvoiceModal').modal('hide');
+            
+            // Afficher le spinner
+            const submitBtn = $('#submitBtn');
+            submitBtn.prop('disabled', true);
+            submitBtn.find('.spinner-border').removeClass('d-none');
+            submitBtn.find('.btn-text').text('Génération en cours...');
+            
+            const formData = {
+                date: $(this).find('input[type="date"]').first().val(),
+                client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
+                services: [],
+                hasTaxes: $('#taxCheck').is(':checked'),
+                status: "pending"
+            };
+
+            // Collecter les services
+            $('.service-entry').each(function() {
+                const service = {
+                    type: $(this).find('.service-type').val(),
+                    quantity: parseFloat($(this).find('.service-quantity').val()),
+                    unitPrice: parseFloat($(this).find('.service-price').val()),
+                    description: $('.modal-body textarea').val() || ''
+                };
+                formData.services.push(service);
+            });
+
+            // Calculer les montants
+            const amounts = calculateAmounts();
+            formData.total = parseFloat(amounts.subtotal);
+            formData.taxAmount = parseFloat(amounts.taxes);
+            formData.totalWithTaxes = parseFloat(amounts.total);
+
+            if (formData.hasTaxes) {
+                formData.taxInfo = {
+                    neq: $('#taxFields input').eq(0).val(),
+                    tps: $('#taxFields input').eq(1).val(),
+                    tvq: $('#taxFields input').eq(2).val()
+                };
+            }
+
+            try {
+                // Simuler un délai de traitement
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Ajouter la facture au tableau
+                addInvoiceRow({
+                    date: formData.date,
+                    quantity: formData.services[0].quantity,
+                    type: formData.services[0].type,
+                    description: formData.services[0].description,
+                    client: formData.client,
+                    unitPrice: formData.services[0].unitPrice.toFixed(2),
+                    total: formData.total.toFixed(2),
+                    taxAmount: formData.taxAmount.toFixed(2),
+                    totalWithTaxes: formData.totalWithTaxes.toFixed(2),
+                    hasTaxes: formData.hasTaxes
+                });
+
+                // Réinitialiser le formulaire et fermer le modal
+                this.reset();
+                $('#newInvoiceModal').modal('hide');
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la génération de la facture.');
+            } finally {
+                // Réinitialiser le bouton
+                submitBtn.prop('disabled', false);
+                submitBtn.find('.spinner-border').addClass('d-none');
+                submitBtn.find('.btn-text').text('Générer');
+            }
         });
 
         function addInvoiceRow(data) {
