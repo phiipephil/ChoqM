@@ -226,12 +226,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/paymentManager.js"></script>
     <script>
+        const paymentManager = new PaymentManager();
         // Activation des tooltips Bootstrap
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
+
+        // Chargement initial des paiements
+        async function loadInitialPayments() {
+            const payments = await paymentManager.loadPayments();
+            payments.forEach(payment => addInvoiceRow(payment));
+        }
+        
+        loadInitialPayments();
 
         // Gestion de l'affichage des champs de taxes
         $('#taxCheck').change(function() {
@@ -284,12 +294,49 @@
         $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
 
         // Gestion des formulaires
-        $('#newInvoiceForm').on('submit', function(e) {
+        $('#newInvoiceForm').on('submit', async function(e) {
             e.preventDefault();
-            // Logique de soumission du formulaire
-            // Ajout de la ligne dans le tableau
-            addInvoiceRow(/* données du formulaire */);
-            $('#newInvoiceModal').modal('hide');
+            
+            const formData = {
+                date: $(this).find('input[type="date"]').first().val(),
+                client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
+                services: [],
+                hasTaxes: $('#taxCheck').is(':checked'),
+                status: "pending",
+                approvedBy: null,
+                paymentDate: null
+            };
+
+            $('.service-entry').each(function() {
+                formData.services.push({
+                    type: $(this).find('.service-type').val(),
+                    quantity: parseFloat($(this).find('.service-quantity').val()),
+                    unitPrice: parseFloat($(this).find('.service-price').val()),
+                    description: $(this).find('textarea').val() || ''
+                });
+            });
+
+            if (formData.hasTaxes) {
+                formData.taxInfo = {
+                    neq: $('#taxFields input').eq(0).val(),
+                    tps: $('#taxFields input').eq(1).val(),
+                    tvq: $('#taxFields input').eq(2).val()
+                };
+            }
+
+            const amounts = calculateAmounts();
+            formData.total = parseFloat(amounts.subtotal);
+            formData.taxAmount = parseFloat(amounts.taxes);
+            formData.totalWithTaxes = parseFloat(amounts.total);
+
+            try {
+                const savedPayment = await paymentManager.savePayment(formData);
+                addInvoiceRow(savedPayment);
+                $('#newInvoiceModal').modal('hide');
+                this.reset();
+            } catch (error) {
+                alert('Erreur lors de la sauvegarde de la facture');
+            }
         });
 
         function addInvoiceRow(data) {
