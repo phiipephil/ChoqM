@@ -361,7 +361,8 @@
                         <select class="form-select form-select-sm approver-select" data-id="${data.id}">
                             <option value="">Sélectionner...</option>
                             <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
-                            <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Eloise</option>
+                            <option value="benoit-xavier" ${data.approvedBy === 'benoit-xavier' ? 'selected' : ''}>Benoit-Xavier</option>
+                            <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Éloïse</option>
                         </select>
                     </td>
                     <td>
@@ -370,7 +371,11 @@
                             <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
                         </select>
                     </td>
-                    <td>${formatValue(data.paymentDate, '-')}</td>
+                    <td>
+                        <input type="date" class="form-control form-control-sm payment-date" 
+                               value="${formatValue(data.paymentDate, '')}"
+                               data-id="${data.id}">
+                    </td>
                 </tr>
             `;
             $('#invoiceTableBody').append(row);
