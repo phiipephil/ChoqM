@@ -6,9 +6,13 @@ class PaymentManager {
 
     async loadPayments() {
         try {
-            const response = await fetch('data/payments.json');
-            const data = await response.json();
-            this.payments = data.payments;
+            const stored = localStorage.getItem('payments');
+            if (stored) {
+                this.payments = JSON.parse(stored);
+            } else {
+                this.payments = [];
+                localStorage.setItem('payments', JSON.stringify(this.payments));
+            }
             return this.payments;
         } catch (error) {
             console.error('Erreur lors du chargement des paiements:', error);
@@ -34,14 +38,7 @@ class PaymentManager {
 
     async saveToFile() {
         try {
-            const response = await fetch('data/payments.json', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ payments: this.payments })
-            });
-            if (!response.ok) throw new Error('Erreur lors de la sauvegarde');
+            localStorage.setItem('payments', JSON.stringify(this.payments));
         } catch (error) {
             console.error('Erreur lors de la sauvegarde du fichier:', error);
             throw error;
