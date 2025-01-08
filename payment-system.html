@@ -312,7 +312,7 @@
                     type: $(this).find('.service-type').val(),
                     quantity: parseFloat($(this).find('.service-quantity').val()),
                     unitPrice: parseFloat($(this).find('.service-price').val()),
-                    description: $(this).find('textarea').val() || ''
+                    description: $('.modal-body textarea').val() || ''
                 });
             });
 
