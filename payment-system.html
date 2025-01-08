@@ -340,18 +340,23 @@
         });
 
         function addInvoiceRow(data) {
+            // Fonction pour formater les valeurs nulles/undefined
+            const formatValue = (value, defaultValue = '-') => {
+                return value !== null && value !== undefined ? value : defaultValue;
+            };
+            
             // Création d'une nouvelle ligne dans le tableau
             const row = `
                 <tr>
-                    <td>${data.date}</td>
-                    <td>${data.quantity}</td>
-                    <td>${data.type}</td>
-                    <td>${data.description}</td>
-                    <td>${data.client}</td>
-                    <td>${data.unitPrice}</td>
-                    <td>${data.total}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${data.taxAmount}</td>
-                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${data.totalWithTaxes}</td>
+                    <td>${formatValue(data.date)}</td>
+                    <td>${formatValue(data.services?.[0]?.quantity)}</td>
+                    <td>${formatValue(data.services?.[0]?.type)}</td>
+                    <td>${formatValue(data.services?.[0]?.description)}</td>
+                    <td>${formatValue(data.client)}</td>
+                    <td>${formatValue(data.services?.[0]?.unitPrice, '0.00')}</td>
+                    <td>${formatValue(data.total, '0.00')}</td>
+                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.taxAmount, '0.00')}</td>
+                    <td class="tax-column ${!data.hasTaxes ? 'd-none' : ''}">${formatValue(data.totalWithTaxes, '0.00')}</td>
                     <td>
                         <select class="form-select form-select-sm">
                             <option>Joey</option>
