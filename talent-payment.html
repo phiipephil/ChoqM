@@ -416,17 +416,39 @@
                     return;
                 }
 
+                // Afficher un indicateur de chargement
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.text();
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...');
+
                 try {
                     const data = await excelReader.readExcelFile(file);
+                    
+                    // Vérifier si des données ont été extraites
+                    if (!data || data.length === 0) {
+                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
+                    }
+
+                    // Traiter chaque paiement
                     for (const payment of data) {
                         const savedPayment = await paymentManager.savePayment(payment);
                         addInvoiceRow(savedPayment);
                     }
+
+                    // Fermer le modal et réinitialiser le formulaire
                     $('#uploadExcelModal').modal('hide');
                     this.reset();
+                    
+                    // Afficher un message de succès
+                    alert(`${data.length} facture(s) importée(s) avec succès`);
                 } catch (error) {
                     console.error('Erreur:', error);
                     alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
+                } finally {
+                    // Réinitialiser le bouton
+                    submitBtn.prop('disabled', false);
+                    submitBtn.text(originalText);
                 }
             });
 
