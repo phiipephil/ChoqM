@@ -55,9 +55,38 @@
 
         <!-- Options de génération -->
         <div class="mb-4">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
-                Générer une nouvelle facture
-            </button>
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
+                    Générer une nouvelle facture
+                </button>
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
+                    Déposer une facture Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Dépôt Facture Excel -->
+        <div class="modal fade" id="uploadExcelModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Déposer une facture Excel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="uploadExcelForm">
+                            <div class="mb-3">
+                                <label class="form-label">Sélectionner le fichier Excel</label>
+                                <input type="file" class="form-control" accept=".xls,.xlsx">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" form="uploadExcelForm" class="btn btn-primary">Déposer</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Tableau principal -->
