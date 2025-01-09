@@ -245,8 +245,6 @@
             const payments = await paymentManager.loadPayments();
             payments.forEach(payment => addInvoiceRow(payment));
         }
-        
-        loadInitialPayments();
 
         // Gestion du bouton de réinitialisation
         $('#clearPaymentsBtn').click(function() {
