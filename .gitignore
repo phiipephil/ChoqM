@@ -1,6 +1,19 @@
+# System files
 .aider*
 .env
 .DS_Store
+
+# Dependencies
 node_modules/
+
+# Data
 data/sensitive/*
 !data/payments.json
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
