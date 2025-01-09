@@ -1,4 +1,4 @@
-class PaymentManager {
+window.PaymentManager = class PaymentManager {
     constructor() {
         this.payments = [];
         this.loadFromStorage();

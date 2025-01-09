@@ -220,7 +220,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/paymentManager.js"></script>
     <script>
-        const paymentManager = new PaymentManager();
+        let paymentManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            paymentManager = new PaymentManager();
+        });
         // Activation des tooltips Bootstrap
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
