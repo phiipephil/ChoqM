@@ -8,7 +8,7 @@
     <link href="css/styles.css" rel="stylesheet">
     <style>
         .footer-container {
-            min-height: 80vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -24,11 +24,25 @@
         }
         .footer-preview {
             margin-top: 5rem;
+            height: calc(100vh - 5rem);
+            overflow: hidden;
         }
         #currentFooterNumber {
             min-width: 3rem;
             display: inline-block;
             text-align: center;
+        }
+        iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            display: block !important;
+        }
+        @media (max-width: 768px) {
+            .footer-preview {
+                margin-top: 4rem;
+                height: calc(100vh - 4rem);
+            }
         }
     </style>
 </head>
@@ -56,7 +70,7 @@
         function loadFooter(number) {
             const iframe = document.createElement('iframe');
             iframe.style.width = '100%';
-            iframe.style.height = '300px';
+            iframe.style.height = '100vh';
             iframe.style.border = 'none';
             iframe.src = `footer/footer${number}.html`;
             
