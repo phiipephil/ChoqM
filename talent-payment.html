@@ -405,6 +405,31 @@
                 $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
             });
 
+            // Gestion du formulaire d'upload Excel
+            const excelReader = new ExcelReader();
+            
+            $('#uploadExcelForm').on('submit', async function(e) {
+                e.preventDefault();
+                const file = $(this).find('input[type="file"]').prop('files')[0];
+                if (!file) {
+                    alert('Veuillez sélectionner un fichier Excel');
+                    return;
+                }
+
+                try {
+                    const data = await excelReader.readExcelFile(file);
+                    for (const payment of data) {
+                        const savedPayment = await paymentManager.savePayment(payment);
+                        addInvoiceRow(savedPayment);
+                    }
+                    $('#uploadExcelModal').modal('hide');
+                    this.reset();
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
+                }
+            });
+
             function addInvoiceRow(data) {
                 const formatValue = (value, defaultValue = '-') => {
                     return value !== null && value !== undefined ? value : defaultValue;
