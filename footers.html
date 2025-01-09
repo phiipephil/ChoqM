@@ -55,7 +55,7 @@
 
         async function loadFooter(number) {
             try {
-                const response = await fetch(`footer/footer${number}.html`);
+                const response = await fetch(`http://localhost:3000/footer/footer${number}.html`);
                 const html = await response.text();
                 document.getElementById('footerPreview').innerHTML = html;
                 document.getElementById('currentFooterNumber').textContent = number;
