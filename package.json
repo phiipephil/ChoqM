@@ -1,0 +1,24 @@
+{
+  "name": "aiders",
+  "version": "1.0.0",
+  "description": "Système de gestion des paiements pour CHOQ, permettant la création et le suivi des factures pour les talents et l'administration.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phiipephil/ChoqM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phiipephil/ChoqM/issues"
+  },
+  "homepage": "https://github.com/phiipephil/ChoqM#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
