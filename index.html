@@ -3,74 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Système de Gestion des Paiements CHOQ</title>
+    <title>CHOQ - Système de Paiement</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container py-5">
+<body class="d-flex flex-column min-vh-100">
+    <div class="container flex-grow-1 d-flex flex-column justify-content-center py-5">
         <div class="text-center mb-5">
-            <h1 class="display-4 mb-3">Système de Gestion des Paiements CHOQ</h1>
-            <p class="lead">Gestion des factures pour les talents et l'administration</p>
+            <h1 class="display-4">CHOQ</h1>
+            <p class="lead">Système de Paiement</p>
         </div>
 
-        <div class="row justify-content-center g-4">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-person-workspace display-1 mb-3 text-primary"></i>
-                        <h2 class="card-title">Espace Talent</h2>
-                        <p class="card-text">Accédez à votre espace pour soumettre et gérer vos factures.</p>
-                        <a href="talent-payment.html" class="btn btn-primary btn-lg">Accéder</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-gear-wide-connected display-1 mb-3 text-primary"></i>
-                        <h2 class="card-title">Administration</h2>
-                        <p class="card-text">Gérez les paiements et suivez les statuts des factures.</p>
-                        <a href="payment-system.html" class="btn btn-primary btn-lg">Accéder</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-5">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">Fonctionnalités principales</h3>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                Interface administrateur pour la gestion des paiements
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                Espace talent pour la soumission des factures
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                Support pour les services multiples par facture
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                Calcul automatique des taxes (TPS/TVQ)
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                Suivi des statuts de paiement
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <div class="d-grid gap-4 col-md-6 mx-auto">
+            <a href="talent-payment.html" class="btn btn-primary btn-lg">
+                Espace Talent
+            </a>
+            <a href="payment-system.html" class="btn btn-secondary btn-lg">
+                Administration
+            </a>
         </div>
     </div>
+
+    <footer class="py-3 bg-light">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 CHOQ. Tous droits réservés.</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
