@@ -7,8 +7,9 @@
 }
 
 body {
-    background-color: var(--background-color);
+    background-color: var(--primary-color);
     font-family: 'Poppins', sans-serif;
+    color: white;
 }
 
 .container-fluid {
