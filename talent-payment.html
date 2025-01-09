@@ -29,6 +29,26 @@
 <body>
     <div class="container-fluid py-4">
         <h1 class="mb-4">Espace Talent - Gestion des Factures</h1>
+        
+        <!-- Sélecteur de type d'employé -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Type d'employé</h5>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="employeeType" id="programmer" value="programmeur" checked>
+                    <label class="form-check-label" for="programmer">Programmeur</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="employeeType" id="photographer" value="photographe">
+                    <label class="form-check-label" for="photographer">Photographe</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="employeeType" id="videographer" value="vidéaste">
+                    <label class="form-check-label" for="videographer">Vidéaste</label>
+                </div>
+            </div>
+        </div>
+
         <nav class="mb-4">
             <a href="index.html" class="btn btn-outline-primary">Retour à l'Administration</a>
         </nav>
@@ -275,6 +295,7 @@
                 const formData = {
                     date: $(this).find('input[type="date"]').first().val(),
                     client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
+                    employeeType: $('input[name="employeeType"]:checked').val(),
                     services: [],
                     hasTaxes: $('#taxCheck').is(':checked'),
                     status: "pending",

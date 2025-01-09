@@ -56,6 +56,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th>Type d'employé <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Catégorie de l'employé"></i></th>
                         <th>Date <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Date de la prestation effectuée"></i></th>
                         <th>Quantité <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Quantité du service rendu"></i></th>
                         <th>Type <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Type de service rendu"></i></th>
@@ -359,6 +360,7 @@
             // Création d'une nouvelle ligne dans le tableau
             const row = `
                 <tr>
+                    <td>${formatValue(data.employeeType, 'Non spécifié')}</td>
                     <td>${formatValue(data.date)}</td>
                     <td>${formatValue(data.services?.[0]?.quantity)}</td>
                     <td>${formatValue(data.services?.[0]?.type)}</td>
