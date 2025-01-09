@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHOQ MÉDIA - Footers Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f13;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .showcase {
+            padding: 2rem;
+        }
+
+        .footer-container {
+            margin-bottom: 4rem;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #1a1a24;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-container:hover {
+            transform: translateY(-10px);
+        }
+
+        .footer-title {
+            padding: 1rem;
+            background: linear-gradient(45deg, #FF3366, #FF6B6B);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            to {
+                left: 100%;
+            }
+        }
+
+        .footer-frame {
+            width: 100%;
+            height: 300px;
+            border: none;
+            display: block;
+        }
+
+        /* Styles spécifiques pour chaque footer */
+        #footer1 {
+            background: linear-gradient(135deg, #6B73FF, #000DFF);
+        }
+
+        #footer2 {
+            background: linear-gradient(135deg, #FF3366, #FF6B6B);
+        }
+
+        #footer3 {
+            background: linear-gradient(135deg, #00F260, #0575E6);
+        }
+
+        #footer4 {
+            background: linear-gradient(135deg, #7F00FF, #E100FF);
+        }
+
+        /* Effet de particules */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .showcase {
+                padding: 1rem;
+            }
+
+            .footer-container {
+                margin-bottom: 2rem;
+            }
+
+            .footer-frame {
+                height: 400px;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <div class="particles" id="particles-js"></div>
+    <div class="showcase">
+        <div class="footer-container">
+            <div class="footer-title">Footer Design 1 - Néon Futuriste</div>
+            <iframe src="footer1.html" class="footer-frame" id="footer1"></iframe>
+        </div>
+        
+        <div class="footer-container">
+            <div class="footer-title">Footer Design 2 - Gradient Dynamique</div>
+            <iframe src="footer2.html" class="footer-frame" id="footer2"></iframe>
+        </div>
+        
+        <div class="footer-container">
+            <div class="footer-title">Footer Design 3 - Effet Cristal</div>
+            <iframe src="footer3.html" class="footer-frame" id="footer3"></iframe>
+        </div>
+        
+        <div class="footer-container">
+            <div class="footer-title">Footer Design 4 - Aurora Borealis</div>
+            <iframe src="footer4.html" class="footer-frame" id="footer4"></iframe>
+        </div>
+    </div>
+
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+</body>
+</html>
