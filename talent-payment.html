@@ -386,16 +386,18 @@
                 return value !== null && value !== undefined ? value : defaultValue;
             };
             
-            // Création d'une nouvelle ligne dans le tableau
-            const row = `
-                <tr>
-                    <td>${formatValue(data.date)}</td>
-                    <td>${formatValue(data.services?.[0]?.quantity)}</td>
-                    <td>${formatValue(data.services?.[0]?.type)}</td>
-                    <td>${formatValue(data.services?.[0]?.description)}</td>
-                    <td>${formatValue(data.client)}</td>
-                    <td>${formatValue(data.services?.[0]?.unitPrice, '0.00')}</td>
-                    <td>${formatValue(data.total, '0.00')}</td>
+            // Créer une ligne pour chaque service
+            let rows = '';
+            data.services.forEach((service, index) => {
+                rows += `
+                <tr ${index === 0 ? `id="payment-${data.id}"` : ''} class="payment-row">
+                    <td>${index === 0 ? formatValue(data.date) : ''}</td>
+                    <td>${formatValue(service.quantity)}</td>
+                    <td>${formatValue(service.type)}</td>
+                    <td>${formatValue(service.description)}</td>
+                    <td>${index === 0 ? formatValue(data.client) : ''}</td>
+                    <td>${formatValue(service.unitPrice, '0.00')}</td>
+                    <td>${index === 0 ? formatValue(data.total, '0.00') : ''}</td>
                     <td>${data.hasTaxes ? `Inclus: ${formatValue(data.taxAmount, '0.00')}` : 'Non-Inclus'}</td>
                     <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
                     <td>
@@ -403,7 +405,7 @@
                     </td>
                 </tr>
             `;
-            $('#invoiceTableBody').append(row);
+            $('#invoiceTableBody').append(rows);
         }
     </script>
 </body>
