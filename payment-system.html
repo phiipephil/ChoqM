@@ -53,6 +53,20 @@
         .service-types-popup li:last-child {
             border-bottom: none;
         }
+        .editable-field:disabled {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        .editable-field:not(:disabled) {
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            padding: .25rem .5rem;
+        }
         .status-paid {
             background-color: #d4edda !important;
         }
@@ -82,6 +96,9 @@
                 </button>
                 <button class="btn btn-danger" id="clearPaymentsBtn">
                     Vider la liste
+                </button>
+                <button class="btn btn-warning" id="toggleEditModeBtn">
+                    Mode édition
                 </button>
             </div>
         </div>
@@ -579,9 +596,12 @@
                 // Créer une seule ligne pour le paiement avec tous les services
                 const row = `
                     <tr id="payment-${data.id}" class="payment-row">
-                        <td>${formatValue(data.employeeType, 'Non spécifié')}</td>
-                        <td>${formatValue(data.date)}</td>
-                        <td>${formatValue(data.services[0].quantity)}</td>
+                        <td><input type="text" class="form-control form-control-sm editable-field" 
+                            value="${formatValue(data.employeeType, 'Non spécifié')}" disabled></td>
+                        <td><input type="date" class="form-control form-control-sm editable-field" 
+                            value="${formatValue(data.date)}" disabled></td>
+                        <td><input type="number" class="form-control form-control-sm editable-field" 
+                            value="${formatValue(data.services[0].quantity)}" disabled></td>
                         <td>
                             <div class="service-types-container">
                                 <span class="service-type-display">
@@ -649,11 +669,23 @@
                 row.addClass('status-' + $(this).val());
             });
 
+            // Gestion du mode édition
+            let editModeEnabled = false;
+            $('#toggleEditModeBtn').click(function() {
+                editModeEnabled = !editModeEnabled;
+                $(this).toggleClass('btn-warning btn-success');
+                $(this).text(editModeEnabled ? 'Sauvegarder' : 'Mode édition');
+                $('.editable-field').prop('disabled', !editModeEnabled);
+            });
+
             // Mise à jour des données lors des changements
-            $(document).on('change', '.approver-select, .status-select, .payment-date', async function() {
-                const id = $(this).data('id');
+            $(document).on('change', '.approver-select, .status-select, .payment-date, .editable-field', async function() {
+                const id = $(this).closest('tr').attr('id').replace('payment-', '');
                 const row = $(`#payment-${id}`);
                 const payment = {
+                    employeeType: row.find('.editable-field').eq(0).val(),
+                    date: row.find('.editable-field').eq(1).val(),
+                    quantity: row.find('.editable-field').eq(2).val(),
                     approvedBy: row.find('.approver-select').val(),
                     status: row.find('.status-select').val(),
                     paymentDate: row.find('.payment-date').val()
