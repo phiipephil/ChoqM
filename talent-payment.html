@@ -80,7 +80,6 @@
     </style>
 </head>
 <body>
-    <!-- [Le reste du code HTML jusqu'au tableau reste identique] -->
     <div class="container-fluid py-4">
         <h1 class="mb-4">Espace Talent - Gestion des Factures</h1>
         
@@ -119,7 +118,6 @@
             </div>
         </div>
 
-        <!-- [Les modals restent identiques] -->
         <!-- Modal Dépôt Facture Excel -->
         <div class="modal fade" id="uploadExcelModal" tabindex="-1">
             <div class="modal-dialog">
@@ -164,7 +162,6 @@
             </table>
         </div>
 
-        <!-- [Le reste des modals reste identique] -->
         <!-- Modal Nouvelle Facture -->
         <div class="modal fade" id="newInvoiceModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
@@ -221,7 +218,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn" onclick="event.preventDefault()">
+                            <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
                                 <i class="bi bi-plus-circle"></i> Ajouter un service
                             </button>
 
@@ -268,241 +265,452 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- Bootstrap JS + jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/paymentManager.js"></script>
-    <script src="js/excelReader.js"></script>
+
+    <!-- 1) PaymentManager -->
     <script>
-        let paymentManager;
-        document.addEventListener('DOMContentLoaded', () => {
-            paymentManager = new PaymentManager();
+    // ==============================
+    //          PaymentManager
+    // ==============================
+    window.PaymentManager = class PaymentManager {
+        constructor() {
+            this.payments = [];
+            this.loadFromStorage();
+        }
 
-            // Activation des tooltips Bootstrap
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-            // Gestion de l'affichage des champs de taxes
-            $('#taxCheck').change(function() {
-                $('#taxFields').toggleClass('d-none', !this.checked);
-                $('.tax-column').toggleClass('d-none', !this.checked);
-            });
-
-            // Calcul automatique des montants
-            function calculateAmounts() {
-                let total = 0;
-                
-                $('.service-entry').each(function() {
-                    const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
-                    const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
-                    total += quantity * unitPrice;
-                });
-                
-                if ($('#taxCheck').is(':checked')) {
-                    const taxes = total * 0.14975; // TPS (5%) + TVQ (9.975%)
-                    const totalWithTaxes = total + taxes;
-                    return {
-                        subtotal: total.toFixed(2),
-                        taxes: taxes.toFixed(2),
-                        total: totalWithTaxes.toFixed(2)
-                    };
+        loadFromStorage() {
+            try {
+                const stored = localStorage.getItem('payments');
+                if (stored) {
+                    this.payments = JSON.parse(stored);
                 }
-                
-                return {
-                    subtotal: total.toFixed(2),
-                    taxes: '0.00',
-                    total: total.toFixed(2)
-                };
+            } catch (error) {
+                console.error('Erreur lors du chargement des paiements:', error);
+                this.payments = [];
             }
+        }
 
-            // Gestion des services multiples
-            $('#addServiceBtn').click(function() {
-                const newService = $('.service-entry:first').clone();
-                newService.find('input').val('');
-                newService.find('select').val('');
-                newService.find('.remove-service').show();
-                $('#servicesContainer').append(newService);
-            });
+        async loadPayments() {
+            return [...this.payments];
+        }
 
-            $(document).on('click', '.remove-service', function() {
-                if ($('.service-entry').length > 1) {
-                    $(this).closest('.service-entry').remove();
-                }
-            });
+        async savePayment(payment) {
+            try {
+                payment.id = Date.now().toString();
+                payment.createdAt = new Date().toISOString();
+                this.payments.push(payment);
+                localStorage.setItem('payments', JSON.stringify(this.payments));
+                return payment;
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde du paiement:', error);
+                throw error;
+            }
+        }
 
-            $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
+        clearPayments() {
+            this.payments = [];
+            localStorage.removeItem('payments');
+        }
+    };
+    </script>
 
-            // Gestion des formulaires
-            $('#newInvoiceForm').on('submit', async function(e) {
-                e.preventDefault();
-                
-                // Afficher le spinner
-                const submitBtn = $('#submitBtn');
-                submitBtn.prop('disabled', true);
-                submitBtn.find('.spinner-border').removeClass('d-none');
-                submitBtn.find('.btn-text').text('Génération en cours...');
-                
-                try {
-                    const formData = {
-                        date: $(this).find('input[type="date"]').first().val(),
-                        client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
-                        employeeType: $('input[name="employeeType"]:checked').val(),
-                        services: [],
-                        hasTaxes: $('#taxCheck').is(':checked'),
-                        status: "pending"
-                    };
+    <!-- 2) ExcelReader simplifié -->
+    <script>
+    // ==============================
+    //          ExcelReader
+    // ==============================
+    class ExcelReader {
+        constructor() {
+            this.error = '';
+        }
 
-                    $('.service-entry').each(function() {
-                        const service = {
-                            type: $(this).find('.service-type').val(),
-                            quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
-                            unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
-                            description: $('.modal-body textarea').val() || ''
-                        };
-                        if (service.type && service.quantity > 0 && service.unitPrice > 0) {
-                            formData.services.push(service);
-                        }
+        async readExcelFile(file) {
+            try {
+                // Lire le fichier en ArrayBuffer
+                const arrayBuffer = await file.arrayBuffer();
+
+                // Parser le classeur (workbook) avec SheetJS
+                const workbook = XLSX.read(arrayBuffer, {
+                    cellStyles: true,
+                    cellFormulas: true,
+                    cellDates: true,
+                    cellNF: true,
+                    sheetStubs: true
+                });
+
+                // Objet qui contiendra le contenu de toutes les feuilles
+                const allSheetsData = {};
+
+                // Parcourir toutes les feuilles du classeur
+                workbook.SheetNames.forEach(sheetName => {
+                    const worksheet = workbook.Sheets[sheetName];
+
+                    // Convertir la feuille en tableau 2D
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                        header: 1,
+                        raw: false,
+                        blankrows: false,
+                        defval: ''
                     });
 
-                    if (formData.services.length === 0) {
-                        throw new Error('Au moins un service doit être spécifié');
+                    // Stocker les données dans allSheetsData
+                    allSheetsData[sheetName] = jsonData;
+                });
+
+                // Retourner toutes les feuilles sous forme d'objet
+                return allSheetsData;
+
+            } catch (err) {
+                this.error = `Erreur lors du traitement du fichier : ${err.message}`;
+                throw err;
+            }
+        }
+    }
+    </script>
+
+    <!-- 3) parseRemunerationSheet -->
+    <script>
+    // ==============================
+    //  parseRemunerationSheet
+    // ==============================
+    function parseRemunerationSheet(allSheetsData) {
+        if (!allSheetsData['Rémunération']) {
+            console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
+            return [];
+        }
+
+        const rows = allSheetsData['Rémunération'];
+        const payments = [];
+
+        // On suppose que les vraies données commencent vers la ligne 7
+        // (d’après ton output). Ajuste si besoin.
+        for (let i = 7; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length < 9) {
+                continue;
+            }
+
+            // Indices possibles : 
+            // row[1] => date
+            // row[4] => quantité
+            // row[5] => type
+            // row[6] => description
+            // row[7] => client
+            // row[8] => tarif unitaire
+            const dateStr = (row[1] || '').toString().trim();
+            const quantityStr = (row[4] || '').toString().trim();
+            const type = (row[5] || '').toString().trim();
+            const description = (row[6] || '').toString().trim();
+            const client = (row[7] || '').toString().trim();
+            const unitPriceStr = (row[8] || '').toString().trim();
+
+            if (!dateStr || !type || !client) {
+                // Ligne incomplète
+                continue;
+            }
+
+            const quantity = parseFloat(quantityStr.replace('$',''));
+            const unitPrice = parseFloat(unitPriceStr.replace('$',''));
+            if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) {
+                // Ligne non valide
+                continue;
+            }
+
+            // Construire un objet payment
+            const payment = {
+                date: dateStr,
+                client: client,
+                employeeType: '',
+                services: [
+                    {
+                        type: type,
+                        quantity: quantity,
+                        unitPrice: unitPrice,
+                        description: description
                     }
+                ],
+                hasTaxes: false,
+                status: "pending"
+            };
 
-                    const amounts = calculateAmounts();
-                    formData.total = parseFloat(amounts.subtotal);
-                    formData.taxAmount = parseFloat(amounts.taxes);
-                    formData.totalWithTaxes = parseFloat(amounts.total);
+            const total = quantity * unitPrice;
+            payment.total = parseFloat(total.toFixed(2));
+            payment.taxAmount = 0; 
+            payment.totalWithTaxes = payment.total;
 
-                    if (formData.hasTaxes) {
-                        formData.taxInfo = {
-                            neq: $('#taxFields input').eq(0).val(),
-                            tps: $('#taxFields input').eq(1).val(),
-                            tvq: $('#taxFields input').eq(2).val()
-                        };
-                    }
+            payments.push(payment);
+        }
 
-                    const savedPayment = await paymentManager.savePayment(formData);
-                    addInvoiceRow(savedPayment);
-                    $('#newInvoiceModal').modal('hide');
-                    this.reset();
-                    
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la génération de la facture.');
-                } finally {
-                    // Réinitialiser le bouton
-                    submitBtn.prop('disabled', false);
-                    submitBtn.find('.spinner-border').addClass('d-none');
-                    submitBtn.find('.btn-text').text('Générer');
-                }
-            });
+        return payments;
+    }
+    </script>
 
-            // Gestion de l'expansion des lignes
-            $(document).on('click', '.expand-button', function() {
-                const detailsRow = $(this).closest('tr').next('.service-details');
-                detailsRow.toggle();
-                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
-            });
+    <!-- 4) Script principal (Logique de la page) -->
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Instancier PaymentManager & ExcelReader
+        const paymentManager = new PaymentManager();
+        const excelReader = new ExcelReader();
 
-            // Gestion du formulaire d'upload Excel
-            const excelReader = new ExcelReader();
+        // Charger dans la table ce qui est déjà stocké en localStorage
+        const existingPayments = await paymentManager.loadPayments();
+        existingPayments.forEach(payment => {
+            addInvoiceRow(payment);
+        });
+
+        // Activation des tooltips Bootstrap
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+        // Gestion de l'affichage des champs de taxes
+        $('#taxCheck').change(function() {
+            $('#taxFields').toggleClass('d-none', !this.checked);
+            $('.tax-column').toggleClass('d-none', !this.checked);
+        });
+
+        // Calcul automatique des montants (exemple simple)
+        function calculateAmounts() {
+            let total = 0;
             
-            $('#uploadExcelForm').on('submit', async function(e) {
-                e.preventDefault();
-                const file = $(this).find('input[type="file"]').prop('files')[0];
-                if (!file) {
-                    alert('Veuillez sélectionner un fichier Excel');
-                    return;
+            $('.service-entry').each(function() {
+                const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
+                const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
+                total += quantity * unitPrice;
+            });
+            
+            if ($('#taxCheck').is(':checked')) {
+                const taxes = total * 0.14975; // TPS + TVQ ~ 14.975%
+                const totalWithTaxes = total + taxes;
+                return {
+                    subtotal: total.toFixed(2),
+                    taxes: taxes.toFixed(2),
+                    total: totalWithTaxes.toFixed(2)
+                };
+            }
+            
+            return {
+                subtotal: total.toFixed(2),
+                taxes: '0.00',
+                total: total.toFixed(2)
+            };
+        }
+
+        // Gestion des services multiples
+        $('#addServiceBtn').click(function(e) {
+            e.preventDefault();
+            const newService = $('.service-entry:first').clone();
+            newService.find('input').val('');
+            newService.find('select').val('');
+            newService.find('.remove-service').show();
+            $('#servicesContainer').append(newService);
+        });
+
+        $(document).on('click', '.remove-service', function() {
+            if ($('.service-entry').length > 1) {
+                $(this).closest('.service-entry').remove();
+            }
+        });
+
+        $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
+
+        // Gérer la soumission du formulaire de nouvelle facture (manuel)
+        $('#newInvoiceForm').on('submit', async function(e) {
+            e.preventDefault();
+
+            // Afficher un spinner
+            const submitBtn = $('#submitBtn');
+            submitBtn.prop('disabled', true);
+            submitBtn.find('.spinner-border').removeClass('d-none');
+            submitBtn.find('.btn-text').text('Génération en cours...');
+
+            try {
+                // Récupérer les infos du formulaire
+                const date = $(this).find('input[type="date"]').first().val();
+                const client = $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val();
+                const employeeType = $('input[name="employeeType"]:checked').val();
+                const description = $(this).find('textarea').val();
+                const hasTaxes = $('#taxCheck').is(':checked');
+
+                // Construire le payment
+                const services = [];
+                $('.service-entry').each(function() {
+                    const service = {
+                        type: $(this).find('.service-type').val(),
+                        quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
+                        unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
+                        description
+                    };
+                    if (service.type && service.quantity > 0 && service.unitPrice > 0) {
+                        services.push(service);
+                    }
+                });
+
+                if (!date || !client || services.length === 0) {
+                    throw new Error('Informations incomplètes pour générer la facture');
                 }
 
-                // Afficher un indicateur de chargement
-                const submitBtn = $(this).find('button[type="submit"]');
-                const originalText = submitBtn.text();
-                submitBtn.prop('disabled', true);
-                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...');
+                // Calcul montants
+                const amounts = calculateAmounts();
+                const payment = {
+                    date,
+                    client,
+                    employeeType,
+                    services,
+                    hasTaxes,
+                    status: "pending",
+                    total: parseFloat(amounts.subtotal),
+                    taxAmount: parseFloat(amounts.taxes),
+                    totalWithTaxes: parseFloat(amounts.total)
+                };
 
-                try {
-                    const data = await excelReader.readExcelFile(file);
-                    
-                    // Vérifier si des données ont été extraites
-                    if (!data || data.length === 0) {
-                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
-                    }
+                if (payment.hasTaxes) {
+                    payment.taxInfo = {
+                        neq: $('#taxFields input').eq(0).val(),
+                        tps: $('#taxFields input').eq(1).val(),
+                        tvq: $('#taxFields input').eq(2).val()
+                    };
+                }
 
-                    // Traiter chaque paiement
-                    for (const payment of data) {
+                // Sauvegarder et afficher
+                const savedPayment = await paymentManager.savePayment(payment);
+                addInvoiceRow(savedPayment);
+
+                // Fermer la modal et reset
+                $('#newInvoiceModal').modal('hide');
+                this.reset();
+                // Remettre l'affichage des champs taxes à 0
+                $('#taxFields').addClass('d-none');
+                $('.tax-column').addClass('d-none');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la génération de la facture: ' + error.message);
+            } finally {
+                // Réinitialiser le bouton
+                submitBtn.prop('disabled', false);
+                submitBtn.find('.spinner-border').addClass('d-none');
+                submitBtn.find('.btn-text').text('Générer');
+            }
+        });
+
+        // Gérer le formulaire d’upload Excel
+        $('#uploadExcelForm').on('submit', async function(e) {
+            e.preventDefault();
+            const file = $(this).find('input[type="file"]').prop('files')[0];
+            if (!file) {
+                alert('Veuillez sélectionner un fichier Excel');
+                return;
+            }
+
+            // Affichage d'un petit indicateur de chargement
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true);
+            submitBtn.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...'
+            );
+
+            try {
+                // Lecture du fichier Excel (toutes les feuilles)
+                const allSheetsData = await excelReader.readExcelFile(file);
+
+                if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
+                    throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
+                }
+
+                // Parser la feuille "Rémunération"
+                const parsedPayments = parseRemunerationSheet(allSheetsData);
+
+                if (parsedPayments.length === 0) {
+                    alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
+                } else {
+                    // Sauvegarder + afficher chaque payment
+                    for (const payment of parsedPayments) {
                         const savedPayment = await paymentManager.savePayment(payment);
                         addInvoiceRow(savedPayment);
                     }
-
-                    // Fermer le modal et réinitialiser le formulaire
-                    $('#uploadExcelModal').modal('hide');
-                    this.reset();
-                    
-                    // Afficher un message de succès
-                    alert(`${data.length} facture(s) importée(s) avec succès`);
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
-                } finally {
-                    // Réinitialiser le bouton
-                    submitBtn.prop('disabled', false);
-                    submitBtn.text(originalText);
+                    alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
                 }
-            });
 
-            function addInvoiceRow(data) {
-                const formatValue = (value, defaultValue = '-') => {
-                    return value !== null && value !== undefined ? value : defaultValue;
-                };
+                // Fermer le modal et réinitialiser le formulaire
+                $('#uploadExcelModal').modal('hide');
+                this.reset();
 
-                // Créer une seule ligne pour le paiement avec tous les services
-                const row = `
-                    <tr id="payment-${data.id}" class="payment-row">
-                        <td>${formatValue(data.date)}</td>
-                        <td>${formatValue(data.client)}</td>
-                        <td>
-                            <div class="service-types-container">
-                                <span class="service-type-display">
-                                    ${data.services[0].type}
-                                    ${data.services.length > 1 ?
-                                        `<span class="badge bg-secondary service-count-badge">
-                                            +${data.services.length - 1}
-                                        </span>`
-                                        : ''
-                                    }
-                                </span>
-                                ${data.services.length > 1 ? `
-                                    <div class="service-types-popup">
-                                        <ul class="list-unstyled mb-0">
-                                            ${data.services.map((service, index) => `
-                                                <li>
-                                                    ${service.type}
-                                                    <small class="text-muted">
-                                                        (${service.quantity} × ${service.unitPrice}$ = ${(service.quantity * service.unitPrice).toFixed(2)}$)
-                                                    </small>
-                                                </li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </td>
-                        <td>${formatValue(data.total, '0.00')}</td>
-                        <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
-                        <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
-                        <td>
-                            <span class="badge bg-warning">En attente</span>
-                        </td>
-                    </tr>`;
-
-                $('#invoiceTableBody').append(row);
-
-                // Réinitialiser les tooltips pour les nouveaux éléments
-                $('[data-bs-toggle="tooltip"]').tooltip();
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
+            } finally {
+                // Réinitialiser le bouton
+                submitBtn.prop('disabled', false);
+                submitBtn.text(originalText);
             }
         });
+
+        // Fonction pour ajouter une ligne au tableau
+        function addInvoiceRow(data) {
+            const formatValue = (value, defaultValue = '-') => {
+                return value !== null && value !== undefined ? value : defaultValue;
+            };
+
+            const row = `
+                <tr id="payment-${data.id}" class="payment-row">
+                    <td>${formatValue(data.date)}</td>
+                    <td>${formatValue(data.client)}</td>
+                    <td>
+                        <div class="service-types-container">
+                            <span class="service-type-display">
+                                ${
+                                    data.services && data.services.length > 0
+                                        ? data.services[0].type
+                                        : '-'
+                                }
+                                ${
+                                    data.services && data.services.length > 1
+                                        ? `<span class="badge bg-secondary service-count-badge">+${data.services.length - 1}</span>`
+                                        : ''
+                                }
+                            </span>
+                            <!-- Petit popup pour voir tous les services, si besoin -->
+                            ${
+                                data.services && data.services.length > 1
+                                ? `
+                                    <div class="service-types-popup">
+                                        <ul class="list-unstyled mb-0">
+                                            ${
+                                                data.services.map(s => `
+                                                    <li>
+                                                        ${s.type}
+                                                        <small class="text-muted">(${s.quantity} × ${s.unitPrice}$ = ${(s.quantity * s.unitPrice).toFixed(2)}$)</small>
+                                                    </li>
+                                                `).join('')
+                                            }
+                                        </ul>
+                                    </div>
+                                  `
+                                : ''
+                            }
+                        </div>
+                    </td>
+                    <td>${formatValue(data.total, '0.00')}</td>
+                    <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
+                    <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
+                    <td>
+                        <span class="badge bg-warning">${data.status}</span>
+                    </td>
+                </tr>
+            `;
+            $('#invoiceTableBody').append(row);
+
+            // Réinitialiser les tooltips pour les nouveaux éléments
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        }
+    });
     </script>
 </body>
 </html>
