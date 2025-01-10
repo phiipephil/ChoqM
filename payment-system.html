@@ -100,6 +100,9 @@
                 <button class="btn btn-warning" id="toggleEditModeBtn">
                     Mode édition
                 </button>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#manageTypesModal">
+                    Gérer les types
+                </button>
             </div>
         </div>
 
@@ -280,6 +283,33 @@
         </div>
     </div>
 
+    <!-- Modal Gestion des Types -->
+    <div class="modal fade" id="manageTypesModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gérer les types de services</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nouveau type de service</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="newServiceType" placeholder="ex: Heure de consultation">
+                            <button class="btn btn-primary" id="addServiceType">Ajouter</button>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6>Types existants</h6>
+                        <ul class="list-group" id="serviceTypesList">
+                            <!-- Les types seront ajoutés dynamiquement ici -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
@@ -290,7 +320,57 @@
         class PaymentManager {
             constructor() {
                 this.payments = [];
+                this.serviceTypes = [
+                    'Heure standard',
+                    'Heure de tournage',
+                    'Heure de montage',
+                    'Vidéo TikTok',
+                    'Vidéo Short',
+                    'Vidéo YouTube',
+                    'Déplacement (Km)',
+                    'Prime de repas',
+                    'Prime d'hébergement'
+                ];
                 this.loadFromStorage();
+            }
+
+            loadServiceTypes() {
+                try {
+                    const stored = localStorage.getItem('serviceTypes');
+                    if (stored) {
+                        this.serviceTypes = JSON.parse(stored);
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du chargement des types:', error);
+                }
+                return this.serviceTypes;
+            }
+
+            saveServiceTypes() {
+                try {
+                    localStorage.setItem('serviceTypes', JSON.stringify(this.serviceTypes));
+                } catch (error) {
+                    console.error('Erreur lors de la sauvegarde des types:', error);
+                }
+            }
+
+            addServiceType(type) {
+                if (!this.serviceTypes.includes(type)) {
+                    this.serviceTypes.push(type);
+                    this.saveServiceTypes();
+                    return true;
+                }
+                return false;
+            }
+
+            removeServiceType(type) {
+                const index = this.serviceTypes.indexOf(type);
+                if (index > -1) {
+                    this.serviceTypes.splice(index, 1);
+                    this.saveServiceTypes();
+                    return true;
+                }
+                return false;
             }
 
             loadFromStorage() {
@@ -668,6 +748,57 @@
                 row.removeClass('status-paid status-unpaid status-pending');
                 row.addClass('status-' + $(this).val());
             });
+
+            // Gestion des types de services
+            function updateServiceTypesList() {
+                const types = paymentManager.loadServiceTypes();
+                const $list = $('#serviceTypesList').empty();
+                const $selects = $('.service-type');
+                
+                types.forEach(type => {
+                    const $item = $(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${type}
+                            <button class="btn btn-danger btn-sm delete-type">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </li>
+                    `);
+                    $list.append($item);
+
+                    // Mettre à jour les selects
+                    $selects.each(function() {
+                        const currentValue = $(this).val();
+                        $(this).empty().append('<option value="">Sélectionner...</option>');
+                        types.forEach(t => {
+                            $(this).append(`<option value="${t}" ${t === currentValue ? 'selected' : ''}>${t}</option>`);
+                        });
+                    });
+                });
+            }
+
+            $('#addServiceType').click(function() {
+                const newType = $('#newServiceType').val().trim();
+                if (newType) {
+                    if (paymentManager.addServiceType(newType)) {
+                        updateServiceTypesList();
+                        $('#newServiceType').val('');
+                    } else {
+                        alert('Ce type existe déjà');
+                    }
+                }
+            });
+
+            $(document).on('click', '.delete-type', function() {
+                const type = $(this).parent().text().trim();
+                if (confirm(`Êtes-vous sûr de vouloir supprimer le type "${type}" ?`)) {
+                    paymentManager.removeServiceType(type);
+                    updateServiceTypesList();
+                }
+            });
+
+            // Initialiser la liste des types
+            updateServiceTypesList();
 
             // Gestion du mode édition
             let editModeEnabled = false;
