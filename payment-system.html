@@ -320,18 +320,9 @@
         class PaymentManager {
             constructor() {
                 this.payments = [];
-                this.serviceTypes = [
-                    'Heure standard',
-                    'Heure de tournage',
-                    'Heure de montage',
-                    'Vidéo TikTok',
-                    'Vidéo Short',
-                    'Vidéo YouTube',
-                    'Déplacement (Km)',
-                    'Prime de repas',
-                    'Prime d'hébergement'
-                ];
+                this.serviceTypes = [];
                 this.loadFromStorage();
+                this.loadServiceTypes();
             }
 
             loadServiceTypes() {
@@ -339,9 +330,24 @@
                     const stored = localStorage.getItem('serviceTypes');
                     if (stored) {
                         this.serviceTypes = JSON.parse(stored);
+                    } else {
+                        // Types par défaut si aucun n'existe en storage
+                        this.serviceTypes = [
+                            'Heure standard',
+                            'Heure de tournage',
+                            'Heure de montage',
+                            'Vidéo TikTok',
+                            'Vidéo Short',
+                            'Vidéo YouTube',
+                            'Déplacement (Km)',
+                            'Prime de repas',
+                            'Prime d'hébergement'
+                        ];
+                        this.saveServiceTypes();
                     }
                 } catch (error) {
                     console.error('Erreur lors du chargement des types:', error);
+                    this.serviceTypes = [];
                 }
                 return this.serviceTypes;
             }
@@ -759,20 +765,20 @@
                     const $item = $(`
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             ${type}
-                            <button class="btn btn-danger btn-sm delete-type">
+                            <button class="btn btn-danger btn-sm delete-type" data-type="${type}">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </li>
                     `);
                     $list.append($item);
+                });
 
-                    // Mettre à jour les selects
-                    $selects.each(function() {
-                        const currentValue = $(this).val();
-                        $(this).empty().append('<option value="">Sélectionner...</option>');
-                        types.forEach(t => {
-                            $(this).append(`<option value="${t}" ${t === currentValue ? 'selected' : ''}>${t}</option>`);
-                        });
+                // Mettre à jour tous les selects de type de service
+                $selects.each(function() {
+                    const currentValue = $(this).val();
+                    $(this).empty().append('<option value="">Sélectionner...</option>');
+                    types.forEach(type => {
+                        $(this).append(`<option value="${type}" ${type === currentValue ? 'selected' : ''}>${type}</option>`);
                     });
                 });
             }
@@ -790,11 +796,16 @@
             });
 
             $(document).on('click', '.delete-type', function() {
-                const type = $(this).parent().text().trim();
+                const type = $(this).data('type');
                 if (confirm(`Êtes-vous sûr de vouloir supprimer le type "${type}" ?`)) {
                     paymentManager.removeServiceType(type);
                     updateServiceTypesList();
                 }
+            });
+
+            // Initialiser la liste des types au chargement de la modal
+            $('#manageTypesModal').on('show.bs.modal', function() {
+                updateServiceTypesList();
             });
 
             // Initialiser la liste des types
