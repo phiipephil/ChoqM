@@ -212,19 +212,19 @@
             </div>
         </div>
 
-        <!-- Modal Dépôt Facture -->
+        <!-- Modal Dépôt Facture Excel -->
         <div class="modal fade" id="uploadInvoiceModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Déposer une facture existante</h5>
+                        <h5 class="modal-title">Déposer une facture Excel</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <form id="uploadInvoiceForm">
                             <div class="mb-3">
-                                <label class="form-label">Sélectionner le fichier</label>
-                                <input type="file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx">
+                                <label class="form-label">Sélectionner le fichier Excel</label>
+                                <input type="file" class="form-control" accept=".xls,.xlsx">
                             </div>
                         </form>
                     </div>
@@ -265,6 +265,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // PaymentManager class definition
         class PaymentManager {
@@ -381,6 +384,141 @@
             });
 
             $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
+
+            // ExcelReader class
+            class ExcelReader {
+                constructor() {
+                    this.error = '';
+                }
+
+                async readExcelFile(file) {
+                    try {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const workbook = XLSX.read(arrayBuffer, {
+                            cellStyles: true,
+                            cellFormulas: true,
+                            cellDates: true,
+                            cellNF: true,
+                            sheetStubs: true
+                        });
+
+                        const allSheetsData = {};
+                        workbook.SheetNames.forEach(sheetName => {
+                            const worksheet = workbook.Sheets[sheetName];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                                header: 1,
+                                raw: false,
+                                blankrows: false,
+                                defval: ''
+                            });
+                            allSheetsData[sheetName] = jsonData;
+                        });
+                        return allSheetsData;
+                    } catch (err) {
+                        this.error = `Erreur lors du traitement du fichier : ${err.message}`;
+                        throw err;
+                    }
+                }
+            }
+
+            // Fonction de parsing des données Excel
+            function parseRemunerationSheet(allSheetsData) {
+                if (!allSheetsData['Rémunération']) {
+                    console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
+                    return [];
+                }
+
+                const rows = allSheetsData['Rémunération'];
+                const payments = [];
+
+                for (let i = 7; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (!row || row.length < 9) continue;
+
+                    const dateStr = (row[1] || '').toString().trim();
+                    const quantityStr = (row[4] || '').toString().trim();
+                    const type = (row[5] || '').toString().trim();
+                    const description = (row[6] || '').toString().trim();
+                    const client = (row[7] || '').toString().trim();
+                    const unitPriceStr = (row[8] || '').toString().trim();
+
+                    if (!dateStr || !type || !client) continue;
+
+                    const quantity = parseFloat(quantityStr.replace('$',''));
+                    const unitPrice = parseFloat(unitPriceStr.replace('$',''));
+                    if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) continue;
+
+                    const payment = {
+                        date: dateStr,
+                        client: client,
+                        employeeType: '',
+                        services: [{
+                            type: type,
+                            quantity: quantity,
+                            unitPrice: unitPrice,
+                            description: description
+                        }],
+                        hasTaxes: false,
+                        status: "pending"
+                    };
+
+                    const total = quantity * unitPrice;
+                    payment.total = parseFloat(total.toFixed(2));
+                    payment.taxAmount = 0;
+                    payment.totalWithTaxes = payment.total;
+
+                    payments.push(payment);
+                }
+                return payments;
+            }
+
+            // Gestion du formulaire d'upload Excel
+            $('#uploadInvoiceForm').on('submit', async function(e) {
+                e.preventDefault();
+                const file = $(this).find('input[type="file"]').prop('files')[0];
+                if (!file) {
+                    alert('Veuillez sélectionner un fichier Excel');
+                    return;
+                }
+
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.text();
+                submitBtn.prop('disabled', true);
+                submitBtn.html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...'
+                );
+
+                try {
+                    const excelReader = new ExcelReader();
+                    const allSheetsData = await excelReader.readExcelFile(file);
+
+                    if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
+                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
+                    }
+
+                    const parsedPayments = parseRemunerationSheet(allSheetsData);
+
+                    if (parsedPayments.length === 0) {
+                        alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
+                    } else {
+                        for (const payment of parsedPayments) {
+                            const savedPayment = await paymentManager.savePayment(payment);
+                            addInvoiceRow(savedPayment);
+                        }
+                        alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
+                    }
+
+                    $('#uploadInvoiceModal').modal('hide');
+                    this.reset();
+
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
+                } finally {
+                    submitBtn.prop('disabled', false);
+                    submitBtn.text(originalText);
+                }
+            });
 
             // Gestion des formulaires
             $('#newInvoiceForm').on('submit', async function(e) {
