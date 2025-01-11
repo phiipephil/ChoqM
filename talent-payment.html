@@ -138,28 +138,6 @@
     color: #fff;
   }
 
-  /* Mode sombre */
-  body.dark-mode {
-    background-color: #1e1e1e;
-    color: #f0f0f0;
-  }
-  body.dark-mode .table-container {
-    background-color: #2b2b2b;
-  }
-  body.dark-mode .modal-content {
-    background-color: #2b2b2b;
-    color: #f0f0f0;
-  }
-  body.dark-mode .table thead th {
-    background-color: #444 !important;
-  }
-  body.dark-mode .info-icon {
-    color: #bbb;
-  }
-  body.dark-mode .btn-dark-mode {
-    color: #fff;
-    border-color: #aaa;
-  }
   </style>
 </head>
 <body>
@@ -195,10 +173,6 @@
           <i class="bi bi-upload"></i> Déposer une facture Excel
         </button>
       </div>
-      <!-- Bouton de mode sombre -->
-      <button class="btn btn-dark-mode" id="toggleDarkModeBtn">
-        <i class="bi bi-moon-stars"></i> Mode sombre
-      </button>
       <!-- Champ de recherche (client) -->
       <div class="ms-auto">
         <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un client..." style="min-width:200px;">
@@ -525,11 +499,6 @@
       updateChart();
     })();
 
-    // Mode sombre
-    const darkBtn=document.getElementById('toggleDarkModeBtn');
-    darkBtn.addEventListener('click',()=>{
-      document.body.classList.toggle('dark-mode');
-    });
 
     // Gérer la recherche (client)
     $('#searchInput').on('input', function(){
