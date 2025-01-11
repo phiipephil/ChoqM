@@ -374,7 +374,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="uploadInvoiceForm" class="btn btn-primary">Déposer</button>
+                        <button type="submit" form="uploadInvoiceForm" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            <span class="btn-text">Déposer</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -930,6 +933,54 @@
             // Initialiser la liste des types au chargement de la modal
             $('#manageTypesModal').on('show.bs.modal', function() {
                 updateServiceTypesList();
+            });
+
+            // Gérer le formulaire d'upload Excel
+            $('#uploadInvoiceForm').on('submit', async function(e) {
+                e.preventDefault();
+                const file = $(this).find('input[type="file"]').prop('files')[0];
+                if (!file) {
+                    alert('Veuillez sélectionner un fichier Excel');
+                    return;
+                }
+
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.find('.btn-text').text();
+                submitBtn.prop('disabled', true);
+                submitBtn.find('.spinner-border').removeClass('d-none');
+                submitBtn.find('.btn-text').text('Traitement...');
+
+                try {
+                    const excelReader = new ExcelReader();
+                    const allSheetsData = await excelReader.readExcelFile(file);
+
+                    if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
+                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
+                    }
+
+                    const parsedPayments = parseRemunerationSheet(allSheetsData);
+
+                    if (parsedPayments.length === 0) {
+                        alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
+                    } else {
+                        for (const payment of parsedPayments) {
+                            const savedPayment = await paymentManager.savePayment(payment);
+                            addInvoiceRow(savedPayment);
+                        }
+                        alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
+                    }
+
+                    $('#uploadInvoiceModal').modal('hide');
+                    this.reset();
+
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
+                } finally {
+                    submitBtn.prop('disabled', false);
+                    submitBtn.find('.spinner-border').addClass('d-none');
+                    submitBtn.find('.btn-text').text(originalText);
+                }
             });
 
             // Initialiser la liste des types
