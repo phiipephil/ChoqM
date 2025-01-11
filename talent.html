@@ -1206,13 +1206,74 @@
             const endDate = new Date(employee.dateDeFinContrat);
             let currentDate = new Date(startDate);
 
+            // Types de services selon le contrat
+            const services = [
+                { type: 'Heure standard', baseRate: parseFloat(employee['Salaire horaire']) },
+                { type: 'Heure supplémentaire', baseRate: parseFloat(employee['Salaire horaire']) * 1.5 },
+                { type: 'Prime de déplacement', baseRate: 0.55 }, // 0.55$/km
+                { type: 'Prime de repas', baseRate: 15.00 }
+            ];
+
             while (currentDate <= endDate) {
+                // Heures normales basées sur le contrat
+                const baseHours = contract.NombreHeuresParSemaine * 2; // Pour 2 semaines
+                const overtimeHours = Math.random() > 0.7 ? Math.floor(Math.random() * 10) : 0;
+                const travelKm = Math.random() > 0.5 ? Math.floor(Math.random() * 100) : 0;
+                const mealDays = Math.floor(Math.random() * 4);
+
+                const paymentServices = [];
+                
+                // Ajouter heures normales
+                if (baseHours > 0) {
+                    paymentServices.push({
+                        type: 'Heure standard',
+                        quantity: baseHours,
+                        unitPrice: services[0].baseRate,
+                        description: `Heures régulières: ${baseHours}h`
+                    });
+                }
+
+                // Ajouter heures supp si présentes
+                if (overtimeHours > 0) {
+                    paymentServices.push({
+                        type: 'Heure supplémentaire',
+                        quantity: overtimeHours,
+                        unitPrice: services[1].baseRate,
+                        description: `Heures supplémentaires: ${overtimeHours}h`
+                    });
+                }
+
+                // Ajouter déplacements si présents
+                if (travelKm > 0) {
+                    paymentServices.push({
+                        type: 'Prime de déplacement',
+                        quantity: travelKm,
+                        unitPrice: services[2].baseRate,
+                        description: `Déplacements: ${travelKm} km`
+                    });
+                }
+
+                // Ajouter primes de repas si présentes
+                if (mealDays > 0) {
+                    paymentServices.push({
+                        type: 'Prime de repas',
+                        quantity: mealDays,
+                        unitPrice: services[3].baseRate,
+                        description: `Primes de repas: ${mealDays} jours`
+                    });
+                }
+
+                // Calculer le total
+                const total = paymentServices.reduce((sum, service) => 
+                    sum + (service.quantity * service.unitPrice), 0);
+
                 const payment = {
                     dateDePaiement: currentDate.toISOString(),
-                    montant: (Math.random() * 1000 + 500).toFixed(2),
-                    nombredheure: Math.floor(Math.random() * 40 + 10),
-                    statut: Math.random() > 0.3, // 70% de chance d'être payé
-                    preuveDePaiement: Math.random() > 0.5 ? 'https://example.com/proof.pdf' : null
+                    montant: parseFloat(total.toFixed(2)),
+                    nombredheure: baseHours + overtimeHours,
+                    statut: currentDate < new Date() ? Math.random() > 0.1 : false, // 90% de chance d'être payé pour dates passées
+                    preuveDePaiement: currentDate < new Date() && Math.random() > 0.1 ? 'https://example.com/proof.pdf' : null,
+                    services: paymentServices
                 };
                 payments.push(payment);
                 
