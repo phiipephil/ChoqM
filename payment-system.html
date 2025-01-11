@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Système de Gestion des Paiements | CHOQ</title>
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -138,16 +140,19 @@
         .modal-header .btn-close {
             filter: brightness(0) invert(1);
         }
+
         .service-count-badge {
             font-size: 0.8em;
             vertical-align: super;
             margin-left: 5px;
             cursor: help;
         }
+
         .service-types-container {
             position: relative;
             display: inline-block;
         }
+
         .service-types-popup {
             display: none;
             position: absolute;
@@ -175,6 +180,7 @@
         .service-types-popup li:last-child {
             border-bottom: none;
         }
+
         .editable-field:disabled {
             background-color: transparent;
             border: none;
@@ -189,6 +195,7 @@
             border: 1px solid #ced4da;
             padding: .25rem .5rem;
         }
+
         .status-paid {
             background-color: #d4edda !important;
         }
@@ -235,19 +242,71 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Type d'employé <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Catégorie de l'employé"></i></th>
-                        <th>Date <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Date de la prestation effectuée"></i></th>
-                        <th>Quantité <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Quantité du service rendu"></i></th>
-                        <th>Type <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Type de service rendu"></i></th>
-                        <th>Description <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Description ou justification du service"></i></th>
-                        <th>Client <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Nom du client"></i></th>
-                        <th>Tarif unitaire <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Tarif appliqué par unité"></i></th>
-                        <th>Montant total <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Calcul automatique: Quantité × Tarif"></i></th>
-                        <th class="tax-column">Montant taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="TPS (5%) + TVQ (9.975%)"></i></th>
-                        <th class="tax-column">Total + Taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Montant total avec taxes"></i></th>
-                        <th>Approuvé par <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Personne ayant approuvé la dépense"></i></th>
-                        <th>Statut <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="État du paiement"></i></th>
-                        <th>Date paiement <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Date du paiement effectué"></i></th>
+                        <th>Type d'employé 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Catégorie de l'employé">
+                            </i>
+                        </th>
+                        <th>Date 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Date de la prestation effectuée">
+                            </i>
+                        </th>
+                        <th>Quantité 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Quantité du service rendu">
+                            </i>
+                        </th>
+                        <th>Type 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Type de service rendu">
+                            </i>
+                        </th>
+                        <th>Description 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Description ou justification du service">
+                            </i>
+                        </th>
+                        <th>Client 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Nom du client">
+                            </i>
+                        </th>
+                        <th>Tarif unitaire 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Tarif appliqué par unité">
+                            </i>
+                        </th>
+                        <th>Montant total 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Calcul automatique: Quantité × Tarif">
+                            </i>
+                        </th>
+                        <th class="tax-column">Montant taxes 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="TPS (5%) + TVQ (9.975%)">
+                            </i>
+                        </th>
+                        <th class="tax-column">Total + Taxes 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Montant total avec taxes">
+                            </i>
+                        </th>
+                        <th>Approuvé par 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Personne ayant approuvé la dépense">
+                            </i>
+                        </th>
+                        <th>Statut 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="État du paiement">
+                            </i>
+                        </th>
+                        <th>Date paiement 
+                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                               title="Date du paiement effectué">
+                            </i>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="invoiceTableBody">
@@ -284,24 +343,18 @@
                                             <label class="form-label">Type de service</label>
                                             <select class="form-select service-type" required>
                                                 <option value="">Sélectionner...</option>
-                                                <option>Heure standard</option>
-                                                <option>Heure de tournage</option>
-                                                <option>Heure de montage</option>
-                                                <option>Vidéo TikTok</option>
-                                                <option>Vidéo Short</option>
-                                                <option>Vidéo YouTube</option>
-                                                <option>Déplacement (Km)</option>
-                                                <option>Prime de repas</option>
-                                                <option>Prime d'hébergement</option>
+                                                <!-- Liste initiale, sera mise à jour dynamiquement -->
                                             </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label">Quantité</label>
-                                            <input type="number" class="form-control service-quantity" min="0" step="0.01" required>
+                                            <input type="number" class="form-control service-quantity" 
+                                                   min="0" step="0.01" required>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label">Tarif unitaire</label>
-                                            <input type="number" class="form-control service-price" min="0" step="0.01" required>
+                                            <input type="number" class="form-control service-price" 
+                                                   min="0" step="0.01" required>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">&nbsp;</label>
@@ -318,7 +371,9 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Description/Justification</label>
-                                <textarea class="form-control" rows="3" placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc."></textarea>
+                                <textarea class="form-control" rows="3" 
+                                          placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc.">
+                                </textarea>
                             </div>
 
                             <div class="mb-3">
@@ -383,7 +438,7 @@
             </div>
         </div>
 
-        <!-- Modal Uniformisation -->
+        <!-- Modal Uniformisation (Exemple) -->
         <div class="modal fade" id="standardizeInvoiceModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -422,7 +477,8 @@
                     <div class="mb-3">
                         <label class="form-label">Nouveau type de service</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="newServiceType" placeholder="ex: Heure de consultation">
+                            <input type="text" class="form-control" id="newServiceType" 
+                                   placeholder="ex: Heure de consultation">
                             <button class="btn btn-primary" id="addServiceType">Ajouter</button>
                         </div>
                     </div>
@@ -437,13 +493,16 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
     <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script>
-        // PaymentManager class definition
+        // ==============================
+        //        PaymentManager
+        // ==============================
         class PaymentManager {
             constructor() {
                 this.payments = [];
@@ -452,13 +511,14 @@
                 this.loadServiceTypes();
             }
 
+            // ----- Types de services -----
             loadServiceTypes() {
                 try {
                     const stored = localStorage.getItem('serviceTypes');
                     if (stored) {
                         this.serviceTypes = JSON.parse(stored);
                     } else {
-                        // Types par défaut si aucun n'existe en storage
+                        // Types par défaut si aucun n'existe
                         this.serviceTypes = [
                             'Heure standard',
                             'Heure de tournage',
@@ -468,7 +528,7 @@
                             'Vidéo YouTube',
                             'Déplacement (Km)',
                             'Prime de repas',
-                            'Prime d'hébergement'
+                            'Prime d\'hébergement'
                         ];
                         this.saveServiceTypes();
                     }
@@ -506,6 +566,7 @@
                 return false;
             }
 
+            // ----- Paiements -----
             loadFromStorage() {
                 try {
                     const stored = localStorage.getItem('payments');
@@ -539,25 +600,143 @@
                 this.payments = [];
                 localStorage.removeItem('payments');
             }
+
+            // Ajout pour permettre la mise à jour en mode édition
+            updatePayment(id, updatedFields) {
+                const index = this.payments.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    // Mettre à jour les champs existants
+                    Object.assign(this.payments[index], updatedFields);
+                    // Sauvegarde dans localStorage
+                    localStorage.setItem('payments', JSON.stringify(this.payments));
+                    return this.payments[index];
+                }
+                return null;
+            }
         }
 
-        // Initialize PaymentManager
+        // ==============================
+        //         ExcelReader
+        // ==============================
+        class ExcelReader {
+            constructor() {
+                this.error = '';
+            }
+
+            async readExcelFile(file) {
+                try {
+                    // Convertir le fichier en ArrayBuffer
+                    const arrayBuffer = await file.arrayBuffer();
+
+                    // Lire le workbook (classeur) avec SheetJS
+                    const workbook = XLSX.read(arrayBuffer, {
+                        cellStyles: true,
+                        cellFormulas: true,
+                        cellDates: true,
+                        cellNF: true,
+                        sheetStubs: true
+                    });
+
+                    // Extraire les données de toutes les feuilles
+                    const allSheetsData = {};
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                            header: 1,
+                            raw: false,
+                            blankrows: false,
+                            defval: ''
+                        });
+                        allSheetsData[sheetName] = jsonData;
+                    });
+
+                    return allSheetsData;
+                } catch (err) {
+                    this.error = `Erreur lors du traitement du fichier : ${err.message}`;
+                    throw err;
+                }
+            }
+        }
+
+        // ==============================
+        //  parseRemunerationSheet
+        // ==============================
+        function parseRemunerationSheet(allSheetsData) {
+            // Hypothèse : la feuille se nomme "Rémunération"
+            if (!allSheetsData['Rémunération']) {
+                console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
+                return [];
+            }
+
+            const rows = allSheetsData['Rémunération'];
+            const payments = [];
+
+            // On suppose que les données utiles commencent vers la ligne 7
+            for (let i = 7; i < rows.length; i++) {
+                const row = rows[i];
+                if (!row || row.length < 9) continue;
+
+                // Indices potentiels selon l’exemple
+                const dateStr = (row[1] || '').toString().trim();
+                const quantityStr = (row[4] || '').toString().trim();
+                const type = (row[5] || '').toString().trim();
+                const description = (row[6] || '').toString().trim();
+                const client = (row[7] || '').toString().trim();
+                const unitPriceStr = (row[8] || '').toString().trim();
+
+                if (!dateStr || !type || !client) continue;
+
+                const quantity = parseFloat(quantityStr.replace('$',''));
+                const unitPrice = parseFloat(unitPriceStr.replace('$',''));
+                if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) {
+                    continue;
+                }
+
+                // Construire l'objet payment
+                const payment = {
+                    date: dateStr,
+                    client: client,
+                    employeeType: '', // on peut le laisser vide
+                    services: [{
+                        type: type,
+                        quantity: quantity,
+                        unitPrice: unitPrice,
+                        description: description
+                    }],
+                    hasTaxes: false,
+                    status: "pending"
+                };
+
+                const total = quantity * unitPrice;
+                payment.total = parseFloat(total.toFixed(2));
+                payment.taxAmount = 0;
+                payment.totalWithTaxes = payment.total;
+
+                payments.push(payment);
+            }
+
+            return payments;
+        }
+
+        // ==============================
+        //   Script Principal (DOM)
+        // ==============================
         let paymentManager;
         document.addEventListener('DOMContentLoaded', () => {
+            // Instancier PaymentManager
             paymentManager = new PaymentManager();
             
-            // Activation des tooltips Bootstrap
+            // Activer les tooltips de Bootstrap
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-            // Chargement initial des paiements
-            async function loadInitialPayments() {
+            // Charger les paiements existants
+            (async function loadInitialPayments() {
                 const payments = await paymentManager.loadPayments();
                 payments.forEach(payment => addInvoiceRow(payment));
-            }
-            loadInitialPayments();
+            })();
 
-            // Gestion du bouton de réinitialisation
+            // Bouton : Vider la liste
             $('#clearPaymentsBtn').click(function() {
                 if (confirm('Êtes-vous sûr de vouloir vider la liste des paiements ?')) {
                     paymentManager.clearPayments();
@@ -565,7 +744,7 @@
                 }
             });
 
-            // Gestion de l'affichage des champs de taxes
+            // Affichage / Masquage des champs de taxes
             $('#taxCheck').change(function() {
                 $('#taxFields').toggleClass('d-none', !this.checked);
                 $('.tax-column').toggleClass('d-none', !this.checked);
@@ -574,7 +753,6 @@
             // Calcul automatique des montants
             function calculateAmounts() {
                 let total = 0;
-                
                 $('.service-entry').each(function() {
                     const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
                     const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
@@ -582,7 +760,7 @@
                 });
                 
                 if ($('#taxCheck').is(':checked')) {
-                    const taxes = total * 0.14975; // TPS (5%) + TVQ (9.975%)
+                    const taxes = total * 0.14975; // 5% TPS + 9.975% TVQ
                     const totalWithTaxes = total + taxes;
                     return {
                         subtotal: total.toFixed(2),
@@ -590,7 +768,6 @@
                         total: totalWithTaxes.toFixed(2)
                     };
                 }
-                
                 return {
                     subtotal: total.toFixed(2),
                     taxes: '0.00',
@@ -598,7 +775,7 @@
                 };
             }
 
-            // Gestion des services multiples
+            // Services multiples dans la modal "Nouvelle facture"
             $('#addServiceBtn').click(function() {
                 const newService = $('.service-entry:first').clone();
                 newService.find('input').val('');
@@ -615,94 +792,7 @@
 
             $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
 
-            // ExcelReader class
-            class ExcelReader {
-                constructor() {
-                    this.error = '';
-                }
-
-                async readExcelFile(file) {
-                    try {
-                        const arrayBuffer = await file.arrayBuffer();
-                        const workbook = XLSX.read(arrayBuffer, {
-                            cellStyles: true,
-                            cellFormulas: true,
-                            cellDates: true,
-                            cellNF: true,
-                            sheetStubs: true
-                        });
-
-                        const allSheetsData = {};
-                        workbook.SheetNames.forEach(sheetName => {
-                            const worksheet = workbook.Sheets[sheetName];
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-                                header: 1,
-                                raw: false,
-                                blankrows: false,
-                                defval: ''
-                            });
-                            allSheetsData[sheetName] = jsonData;
-                        });
-                        return allSheetsData;
-                    } catch (err) {
-                        this.error = `Erreur lors du traitement du fichier : ${err.message}`;
-                        throw err;
-                    }
-                }
-            }
-
-            // Fonction de parsing des données Excel
-            function parseRemunerationSheet(allSheetsData) {
-                if (!allSheetsData['Rémunération']) {
-                    console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
-                    return [];
-                }
-
-                const rows = allSheetsData['Rémunération'];
-                const payments = [];
-
-                for (let i = 7; i < rows.length; i++) {
-                    const row = rows[i];
-                    if (!row || row.length < 9) continue;
-
-                    const dateStr = (row[1] || '').toString().trim();
-                    const quantityStr = (row[4] || '').toString().trim();
-                    const type = (row[5] || '').toString().trim();
-                    const description = (row[6] || '').toString().trim();
-                    const client = (row[7] || '').toString().trim();
-                    const unitPriceStr = (row[8] || '').toString().trim();
-
-                    if (!dateStr || !type || !client) continue;
-
-                    const quantity = parseFloat(quantityStr.replace('$',''));
-                    const unitPrice = parseFloat(unitPriceStr.replace('$',''));
-                    if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) continue;
-
-                    const payment = {
-                        date: dateStr,
-                        client: client,
-                        employeeType: '',
-                        services: [{
-                            type: type,
-                            quantity: quantity,
-                            unitPrice: unitPrice,
-                            description: description
-                        }],
-                        hasTaxes: false,
-                        status: "pending"
-                    };
-
-                    const total = quantity * unitPrice;
-                    payment.total = parseFloat(total.toFixed(2));
-                    payment.taxAmount = 0;
-                    payment.totalWithTaxes = payment.total;
-
-                    payments.push(payment);
-                }
-                return payments;
-            }
-
-            // Gestion du formulaire d'upload Excel
+            // Gérer le formulaire d’upload Excel (Import)
             $('#uploadInvoiceForm').on('submit', async function(e) {
                 e.preventDefault();
                 const file = $(this).find('input[type="file"]').prop('files')[0];
@@ -711,239 +801,7 @@
                     return;
                 }
 
-                const submitBtn = $(this).find('button[type="submit"]');
-                const originalText = submitBtn.text();
-                submitBtn.prop('disabled', true);
-                submitBtn.html(
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...'
-                );
-
-                try {
-                    const excelReader = new ExcelReader();
-                    const allSheetsData = await excelReader.readExcelFile(file);
-
-                    if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
-                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
-                    }
-
-                    const parsedPayments = parseRemunerationSheet(allSheetsData);
-
-                    if (parsedPayments.length === 0) {
-                        alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
-                    } else {
-                        for (const payment of parsedPayments) {
-                            const savedPayment = await paymentManager.savePayment(payment);
-                            addInvoiceRow(savedPayment);
-                        }
-                        alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
-                    }
-
-                    $('#uploadInvoiceModal').modal('hide');
-                    this.reset();
-
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
-                } finally {
-                    submitBtn.prop('disabled', false);
-                    submitBtn.text(originalText);
-                }
-            });
-
-            // Gestion des formulaires
-            $('#newInvoiceForm').on('submit', async function(e) {
-                e.preventDefault();
-                
-                try {
-                    const formData = {
-                        date: $(this).find('input[type="date"]').first().val(),
-                        client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
-                        services: [],
-                        hasTaxes: $('#taxCheck').is(':checked'),
-                        status: "pending"
-                    };
-
-                    $('.service-entry').each(function() {
-                        const service = {
-                            type: $(this).find('.service-type').val(),
-                            quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
-                            unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
-                            description: $('.modal-body textarea').val() || ''
-                        };
-                        if (service.type && service.quantity > 0 && service.unitPrice > 0) {
-                            formData.services.push(service);
-                        }
-                    });
-
-                    if (formData.services.length === 0) {
-                        throw new Error('Au moins un service doit être spécifié');
-                    }
-
-                    const amounts = calculateAmounts();
-                    formData.total = parseFloat(amounts.subtotal);
-                    formData.taxAmount = parseFloat(amounts.taxes);
-                    formData.totalWithTaxes = parseFloat(amounts.total);
-
-                    if (formData.hasTaxes) {
-                        formData.taxInfo = {
-                            neq: $('#taxFields input').eq(0).val(),
-                            tps: $('#taxFields input').eq(1).val(),
-                            tvq: $('#taxFields input').eq(2).val()
-                        };
-                    }
-
-                    const savedPayment = await paymentManager.savePayment(formData);
-                    addInvoiceRow(savedPayment);
-                    $('#newInvoiceModal').modal('hide');
-                    this.reset();
-                } catch (error) {
-                    alert('Erreur lors de la sauvegarde de la facture');
-                }
-            });
-
-            function addInvoiceRow(data) {
-                const formatValue = (value, defaultValue = '-') => {
-                    return value !== null && value !== undefined ? value : defaultValue;
-                };
-
-                // Créer une seule ligne pour le paiement avec tous les services
-                const row = `
-                    <tr id="payment-${data.id}" class="payment-row">
-                        <td><input type="text" class="form-control form-control-sm editable-field" 
-                            value="${formatValue(data.employeeType, 'Non spécifié')}" disabled></td>
-                        <td><input type="date" class="form-control form-control-sm editable-field" 
-                            value="${formatValue(data.date)}" disabled></td>
-                        <td><input type="number" class="form-control form-control-sm editable-field" 
-                            value="${formatValue(data.services[0].quantity)}" disabled></td>
-                        <td>
-                            <div class="service-types-container">
-                                <span class="service-type-display">
-                                    ${data.services[0].type}
-                                    ${data.services.length > 1 ?
-                                        `<span class="badge bg-secondary service-count-badge">
-                                            +${data.services.length - 1}
-                                        </span>`
-                                        : ''
-                                    }
-                                </span>
-                                ${data.services.length > 1 ? `
-                                    <div class="service-types-popup">
-                                        <ul class="list-unstyled mb-0">
-                                            ${data.services.map((service, index) => `
-                                                <li>
-                                                    ${service.type}
-                                                    <small class="text-muted">
-                                                        (${service.quantity} × ${service.unitPrice}$ = ${(service.quantity * service.unitPrice).toFixed(2)}$)
-                                                    </small>
-                                                </li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </td>
-                        <td>${formatValue(data.services[0].description)}</td>
-                        <td>${formatValue(data.client)}</td>
-                        <td>${formatValue(data.services[0].unitPrice, '0.00')}</td>
-                        <td>${formatValue(data.total, '0.00')}</td>
-                        <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
-                        <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
-                        <td>
-                            <select class="form-select form-select-sm approver-select" data-id="${data.id}">
-                                <option value="">Sélectionner...</option>
-                                <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
-                                <option value="benoit-xavier" ${data.approvedBy === 'benoit-xavier' ? 'selected' : ''}>Benoit-Xavier</option>
-                                <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Éloïse</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select class="form-select form-select-sm status-select" data-id="${data.id}">
-                                <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
-                                <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" class="form-control form-control-sm payment-date"
-                                   value="${formatValue(data.paymentDate, '')}"
-                                   data-id="${data.id}">
-                        </td>
-                    </tr>`;
-
-                $('#invoiceTableBody').append(row);
-
-                // Réinitialiser les tooltips pour les nouveaux éléments
-                $('[data-bs-toggle="tooltip"]').tooltip();
-            }
-
-            // Gestion du changement de statut
-            $(document).on('change', '.status-select', function() {
-                const row = $(this).closest('tr');
-                row.removeClass('status-paid status-unpaid status-pending');
-                row.addClass('status-' + $(this).val());
-            });
-
-            // Gestion des types de services
-            function updateServiceTypesList() {
-                const types = paymentManager.loadServiceTypes();
-                const $list = $('#serviceTypesList').empty();
-                const $selects = $('.service-type');
-                
-                types.forEach(type => {
-                    const $item = $(`
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${type}
-                            <button class="btn btn-danger btn-sm delete-type" data-type="${type}">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </li>
-                    `);
-                    $list.append($item);
-                });
-
-                // Mettre à jour tous les selects de type de service
-                $selects.each(function() {
-                    const currentValue = $(this).val();
-                    $(this).empty().append('<option value="">Sélectionner...</option>');
-                    types.forEach(type => {
-                        $(this).append(`<option value="${type}" ${type === currentValue ? 'selected' : ''}>${type}</option>`);
-                    });
-                });
-            }
-
-            $('#addServiceType').click(function() {
-                const newType = $('#newServiceType').val().trim();
-                if (newType) {
-                    if (paymentManager.addServiceType(newType)) {
-                        updateServiceTypesList();
-                        $('#newServiceType').val('');
-                    } else {
-                        alert('Ce type existe déjà');
-                    }
-                }
-            });
-
-            $(document).on('click', '.delete-type', function() {
-                const type = $(this).data('type');
-                if (confirm(`Êtes-vous sûr de vouloir supprimer le type "${type}" ?`)) {
-                    paymentManager.removeServiceType(type);
-                    updateServiceTypesList();
-                }
-            });
-
-            // Initialiser la liste des types au chargement de la modal
-            $('#manageTypesModal').on('show.bs.modal', function() {
-                updateServiceTypesList();
-            });
-
-            // Gérer le formulaire d'upload Excel
-            $('#uploadInvoiceForm').on('submit', async function(e) {
-                e.preventDefault();
-                const file = $(this).find('input[type="file"]').prop('files')[0];
-                if (!file) {
-                    alert('Veuillez sélectionner un fichier Excel');
-                    return;
-                }
-
+                // Activer le spinner
                 const submitBtn = $(this).find('button[type="submit"]');
                 const originalText = submitBtn.find('.btn-text').text();
                 submitBtn.prop('disabled', true);
@@ -970,6 +828,7 @@
                         alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
                     }
 
+                    // Fermer la modal et réinitialiser le formulaire
                     $('#uploadInvoiceModal').modal('hide');
                     this.reset();
 
@@ -977,16 +836,228 @@
                     console.error('Erreur:', error);
                     alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
                 } finally {
+                    // Réinitialiser le bouton
                     submitBtn.prop('disabled', false);
                     submitBtn.find('.spinner-border').addClass('d-none');
                     submitBtn.find('.btn-text').text(originalText);
                 }
             });
 
-            // Initialiser la liste des types
+            // Gérer la soumission du formulaire "Nouvelle facture"
+            $('#newInvoiceForm').on('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const formData = {
+                        date: $(this).find('input[type="date"]').first().val(),
+                        client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
+                        services: [],
+                        hasTaxes: $('#taxCheck').is(':checked'),
+                        status: "pending"
+                    };
+
+                    // Récupérer toutes les lignes de services
+                    const descriptionText = $(this).find('textarea').val() || '';
+                    $('.service-entry').each(function() {
+                        const service = {
+                            type: $(this).find('.service-type').val(),
+                            quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
+                            unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
+                            description: descriptionText
+                        };
+                        if (service.type && service.quantity > 0 && service.unitPrice > 0) {
+                            formData.services.push(service);
+                        }
+                    });
+
+                    if (formData.services.length === 0) {
+                        throw new Error('Au moins un service doit être spécifié');
+                    }
+
+                    const amounts = calculateAmounts();
+                    formData.total = parseFloat(amounts.subtotal);
+                    formData.taxAmount = parseFloat(amounts.taxes);
+                    formData.totalWithTaxes = parseFloat(amounts.total);
+
+                    if (formData.hasTaxes) {
+                        formData.taxInfo = {
+                            neq: $('#taxFields input').eq(0).val(),
+                            tps: $('#taxFields input').eq(1).val(),
+                            tvq: $('#taxFields input').eq(2).val()
+                        };
+                    }
+
+                    // Sauvegarde + ajout au tableau
+                    const savedPayment = await paymentManager.savePayment(formData);
+                    addInvoiceRow(savedPayment);
+
+                    // Fermer la modal + reset
+                    $('#newInvoiceModal').modal('hide');
+                    this.reset();
+                    // Masquer à nouveau les champs de taxes si cochés
+                    $('#taxFields').addClass('d-none');
+                    $('.tax-column').addClass('d-none');
+
+                } catch (error) {
+                    alert('Erreur lors de la sauvegarde de la facture : ' + error.message);
+                }
+            });
+
+            // Ajoute une nouvelle ligne dans le tableau HTML
+            function addInvoiceRow(data) {
+                const formatValue = (value, defaultValue = '-') => {
+                    return value !== null && value !== undefined ? value : defaultValue;
+                };
+
+                // On n’affiche que le 1er service dans la ligne principale, 
+                // les autres services (s’il y en a) sont visibles au survol.
+                const row = `
+                    <tr id="payment-${data.id}" class="payment-row">
+                        <td>
+                            <input type="text" 
+                                   class="form-control form-control-sm editable-field" 
+                                   value="${formatValue(data.employeeType, 'Non spécifié')}" 
+                                   disabled>
+                        </td>
+                        <td>
+                            <input type="date" 
+                                   class="form-control form-control-sm editable-field" 
+                                   value="${formatValue(data.date)}" 
+                                   disabled>
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   class="form-control form-control-sm editable-field" 
+                                   value="${formatValue(data.services[0].quantity, 0)}" 
+                                   disabled>
+                        </td>
+                        <td>
+                            <div class="service-types-container">
+                                <span class="service-type-display">
+                                    ${data.services[0].type}
+                                    ${
+                                        data.services.length > 1
+                                        ? `<span class="badge bg-secondary service-count-badge">+${data.services.length - 1}</span>`
+                                        : ''
+                                    }
+                                </span>
+                                ${
+                                    data.services.length > 1
+                                    ? `
+                                        <div class="service-types-popup">
+                                            <ul class="list-unstyled mb-0">
+                                                ${data.services.map(service => `
+                                                    <li>
+                                                        ${service.type}
+                                                        <small class="text-muted">
+                                                            (${service.quantity} × ${service.unitPrice}$ 
+                                                             = ${(service.quantity * service.unitPrice).toFixed(2)}$)
+                                                        </small>
+                                                    </li>
+                                                `).join('')}
+                                            </ul>
+                                        </div>
+                                      `
+                                    : ''
+                                }
+                            </div>
+                        </td>
+                        <td>${formatValue(data.services[0].description)}</td>
+                        <td>${formatValue(data.client)}</td>
+                        <td>${formatValue(data.services[0].unitPrice, '0.00')}</td>
+                        <td>${formatValue(data.total, '0.00')}</td>
+                        <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
+                        <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
+                        <td>
+                            <select class="form-select form-select-sm approver-select" data-id="${data.id}">
+                                <option value="">Sélectionner...</option>
+                                <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
+                                <option value="benoit-xavier" ${data.approvedBy === 'benoit-xavier' ? 'selected' : ''}>Benoit-Xavier</option>
+                                <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Éloïse</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm status-select" data-id="${data.id}">
+                                <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
+                                <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="date" 
+                                   class="form-control form-control-sm payment-date"
+                                   value="${formatValue(data.paymentDate, '')}"
+                                   data-id="${data.id}">
+                        </td>
+                    </tr>
+                `;
+                $('#invoiceTableBody').append(row);
+                // Réinitialiser tooltips pour ce nouvel élément
+                $('[data-bs-toggle="tooltip"]').tooltip();
+            }
+
+            // Gestion des selects "statut" (pour colorer éventuellement)
+            $(document).on('change', '.status-select', function() {
+                const row = $(this).closest('tr');
+                row.removeClass('status-paid status-unpaid status-pending');
+                row.addClass('status-' + $(this).val());
+            });
+
+            // Gérer la liste des types de service
+            function updateServiceTypesList() {
+                const types = paymentManager.loadServiceTypes();
+                const $list = $('#serviceTypesList').empty();
+                const $selects = $('.service-type');
+                
+                types.forEach(type => {
+                    // Ajouter chaque type dans la liste de la modal
+                    const $item = $(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${type}
+                            <button class="btn btn-danger btn-sm delete-type" data-type="${type}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </li>
+                    `);
+                    $list.append($item);
+                });
+
+                // Mettre à jour tous les <select> "service-type"
+                $selects.each(function() {
+                    const currentValue = $(this).val();
+                    $(this).empty().append('<option value="">Sélectionner...</option>');
+                    types.forEach(type => {
+                        $(this).append(
+                            `<option value="${type}" ${type === currentValue ? 'selected' : ''}>${type}</option>`
+                        );
+                    });
+                });
+            }
+
+            // Ajouter un nouveau type
+            $('#addServiceType').click(function() {
+                const newType = $('#newServiceType').val().trim();
+                if (newType) {
+                    if (paymentManager.addServiceType(newType)) {
+                        updateServiceTypesList();
+                        $('#newServiceType').val('');
+                    } else {
+                        alert('Ce type existe déjà');
+                    }
+                }
+            });
+
+            // Supprimer un type
+            $(document).on('click', '.delete-type', function() {
+                const type = $(this).data('type');
+                if (confirm(`Êtes-vous sûr de vouloir supprimer le type "${type}" ?`)) {
+                    paymentManager.removeServiceType(type);
+                    updateServiceTypesList();
+                }
+            });
+
+            // Initialiser la liste des types au chargement
             updateServiceTypesList();
 
-            // Gestion du mode édition
+            // Mode édition (activer/désactiver les champs)
             let editModeEnabled = false;
             $('#toggleEditModeBtn').click(function() {
                 editModeEnabled = !editModeEnabled;
@@ -995,20 +1066,38 @@
                 $('.editable-field').prop('disabled', !editModeEnabled);
             });
 
-            // Mise à jour des données lors des changements
-            $(document).on('change', '.approver-select, .status-select, .payment-date, .editable-field', async function() {
-                const id = $(this).closest('tr').attr('id').replace('payment-', '');
-                const row = $(`#payment-${id}`);
-                const payment = {
-                    employeeType: row.find('.editable-field').eq(0).val(),
-                    date: row.find('.editable-field').eq(1).val(),
-                    quantity: row.find('.editable-field').eq(2).val(),
-                    approvedBy: row.find('.approver-select').val(),
-                    status: row.find('.status-select').val(),
-                    paymentDate: row.find('.payment-date').val()
-                };
-                await paymentManager.updatePayment(id, payment);
-            });
+            // Mise à jour des données en localStorage à chaque changement
+            $(document).on('change', 
+                '.approver-select, .status-select, .payment-date, .editable-field',
+                async function() {
+                    const row = $(this).closest('tr');
+                    const id = row.attr('id').replace('payment-', '');
+
+                    // Récupérer tous les champs
+                    const employeeType = row.find('.editable-field').eq(0).val();
+                    const date = row.find('.editable-field').eq(1).val();
+                    const quantity = row.find('.editable-field').eq(2).val();
+
+                    // Approuvé par, statut, date paiement
+                    const approvedBy = row.find('.approver-select').val();
+                    const status = row.find('.status-select').val();
+                    const paymentDate = row.find('.payment-date').val();
+
+                    const updatedPayment = {
+                        employeeType,
+                        date,
+                        // Si on gérait la quantité globale (s'il n'y a qu'un seul service):
+                        // => On pourrait re-calculer le total, etc., 
+                        //    mais ici on se limite à la démo de la mise à jour
+                        quantity,
+                        approvedBy,
+                        status,
+                        paymentDate
+                    };
+
+                    paymentManager.updatePayment(id, updatedPayment);
+                }
+            );
         });
     </script>
 </body>
