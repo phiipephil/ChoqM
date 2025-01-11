@@ -918,7 +918,7 @@
                                    value="${formatValue(data.employeeType, 'Non spécifié')}" 
                                    disabled>
                         </td>
-                        <td>
+                        <td style="min-width: 150px;">
                             <input type="date" 
                                    class="form-control form-control-sm editable-field" 
                                    value="${formatValue(data.date)}" 
@@ -985,7 +985,7 @@
                         <td>${formatValue(data.total, '0.00')}</td>
                         <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
                         <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
-                        <td>
+                        <td style="min-width: 150px;">
                             <select class="form-select form-select-sm approver-select" data-id="${data.id}">
                                 <option value="">Sélectionner...</option>
                                 <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
@@ -993,7 +993,7 @@
                                 <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Éloïse</option>
                             </select>
                         </td>
-                        <td>
+                        <td style="min-width: 120px;">
                             <select class="form-select form-select-sm status-select" data-id="${data.id}">
                                 <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
                                 <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
