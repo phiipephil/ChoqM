@@ -1192,10 +1192,51 @@
             // Générer le courriel basé sur le nom
             employee.Courriel = `${employee.Prénom.toLowerCase()}.${employee.Nom.toLowerCase()}@example.com`;
 
+            // Simuler un contrat
+            const contract = {
+                dateDeDebut: new Date(2024, 0, 1).toISOString(),
+                dateDeFin: employee.dateDeFinContrat,
+                NombreHeuresParSemaine: Math.floor(Math.random() * 20 + 20), // Entre 20 et 40h
+                pdfUrl: null
+            };
+
+            // Simuler des paiements
+            const payments = [];
+            const startDate = new Date(2024, 0, 1);
+            const endDate = new Date(employee.dateDeFinContrat);
+            let currentDate = new Date(startDate);
+
+            while (currentDate <= endDate) {
+                const payment = {
+                    dateDePaiement: currentDate.toISOString(),
+                    montant: (Math.random() * 1000 + 500).toFixed(2),
+                    nombredheure: Math.floor(Math.random() * 40 + 10),
+                    statut: Math.random() > 0.3, // 70% de chance d'être payé
+                    preuveDePaiement: Math.random() > 0.5 ? 'https://example.com/proof.pdf' : null
+                };
+                payments.push(payment);
+                
+                // Avancer de 2 semaines
+                currentDate.setDate(currentDate.getDate() + 14);
+            }
+
             // Mettre à jour l'interface
             if (window.employeeCardUpdate) {
                 window.employeeCardUpdate(employee);
                 showMessage('Données employé simulées avec succès', 'success');
+
+                // Envoyer les données du contrat
+                window.parent.postMessage({
+                    type: 'contractData',
+                    contract: contract,
+                    hourlyRate: employee['Salaire horaire']
+                }, '*');
+
+                // Envoyer les données des paiements
+                window.parent.postMessage({
+                    type: 'paymentData',
+                    payments: payments
+                }, '*');
             }
         }
 
