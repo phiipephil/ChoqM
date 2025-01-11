@@ -7,14 +7,136 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 1rem;
+        }
+
         .info-icon {
             cursor: pointer;
-            color: #0d6efd;
+            color: var(--accent-color);
             margin-left: 5px;
+            transition: color 0.3s ease;
         }
+
+        .info-icon:hover {
+            color: var(--primary-color);
+        }
+
         .table-container {
             overflow-x: auto;
             min-height: 400px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: var(--primary-color);
+        }
+
+        .btn-group {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            border: 1px solid #dee2e6;
+            padding: 0.5rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .modal-content {
+            border-radius: var(--border-radius);
+            box-shadow: 0 3px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
         }
         .service-count-badge {
             font-size: 0.8em;
@@ -80,28 +202,30 @@
 </head>
 <body>
     <div class="container-fluid py-4">
-        <h1 class="mb-4">Système de Gestion des Paiements</h1>
+        <h1>Système de Gestion des Paiements</h1>
         <nav class="mb-4">
-            <a href="talent-payment.html" class="btn btn-outline-primary">Espace Talent</a>
+            <a href="talent-payment.html" class="btn btn-outline-primary">
+                <i class="bi bi-person-workspace"></i> Espace Talent
+            </a>
         </nav>
 
         <!-- Options de génération -->
-        <div class="mb-4">
+        <div class="action-buttons mb-4">
             <div class="btn-group" role="group">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
-                    Générer une nouvelle facture
+                    <i class="bi bi-plus-circle"></i> Nouvelle facture
                 </button>
                 <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadInvoiceModal">
-                    Déposer une facture existante
+                    <i class="bi bi-upload"></i> Importer une facture
                 </button>
                 <button class="btn btn-danger" id="clearPaymentsBtn">
-                    Vider la liste
+                    <i class="bi bi-trash"></i> Vider la liste
                 </button>
                 <button class="btn btn-warning" id="toggleEditModeBtn">
-                    Mode édition
+                    <i class="bi bi-pencil-square"></i> Mode édition
                 </button>
                 <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#manageTypesModal">
-                    Gérer les types
+                    <i class="bi bi-gear"></i> Gérer les types
                 </button>
             </div>
         </div>
