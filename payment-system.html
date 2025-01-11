@@ -932,10 +932,15 @@
                         </td>
                         <td>
                             <div class="service-types-container">
-                                <input type="text" 
-                                       class="form-control form-control-sm editable-field service-type-input" 
-                                       value="${data.services[0].type}"
-                                       disabled>
+                                <select class="form-control form-control-sm editable-field service-type-input" 
+                                        disabled>
+                                    <option value="">Sélectionner...</option>
+                                    ${paymentManager.serviceTypes.map(type => `
+                                        <option value="${type}" ${type === data.services[0].type ? 'selected' : ''}>
+                                            ${type}
+                                        </option>
+                                    `).join('')}
+                                </select>
                                 ${
                                     data.services.length > 1
                                     ? `
