@@ -1011,7 +1011,7 @@
                                    disabled>
                         </td>
                         <td style="min-width: 150px;">
-                            <select class="form-select form-select-sm editable-field approver-select" data-id="${data.id}" disabled>
+                            <select class="form-select form-select-sm approver-select" data-id="${data.id}">
                                 <option value="">Sélectionner...</option>
                                 <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
                                 <option value="benoit-xavier" ${data.approvedBy === 'benoit-xavier' ? 'selected' : ''}>Benoit-Xavier</option>
@@ -1019,14 +1019,14 @@
                             </select>
                         </td>
                         <td style="min-width: 120px;">
-                            <select class="form-select form-select-sm editable-field status-select" data-id="${data.id}" disabled>
+                            <select class="form-select form-select-sm status-select" data-id="${data.id}">
                                 <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
                                 <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
                             </select>
                         </td>
                         <td>
                             <input type="date" 
-                                   class="form-control form-control-sm payment-date"
+                                   class="form-control form-control-sm payment-date editable-field"
                                    value="${formatValue(data.paymentDate, '')}"
                                    data-id="${data.id}">
                         </td>
