@@ -1,1152 +1,911 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration - Système de Gestion des Paiements | CHOQ</title>
-    <!-- Bootstrap & Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Administration - Système de Gestion des Paiements | CHOQ</title>
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Chart.js (pour le graphique) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  
+  <style>
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --light-bg: #f8f9fa;
+    --border-radius: 8px;
+  }
+  body {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+  }
+  .container-fluid {
+    max-width: 1800px; margin: 0 auto; padding: 2rem;
+  }
+  h1 {
+    color: var(--primary-color); font-weight: 700; margin-bottom: 2rem;
+    border-bottom: 3px solid var(--accent-color); padding-bottom: 1rem;
+  }
+  .info-icon {
+    cursor: pointer; color: var(--accent-color); margin-left:5px;
+    transition: color 0.3s ease;
+  }
+  .info-icon:hover { color: var(--primary-color); }
+  .table-container {
+    overflow-x: hidden; min-height: 600px; background: white;
+    border-radius: var(--border-radius); box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 1rem; margin-top: 2rem;
+  }
+  .btn {
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem; font-weight: 500; transition: all 0.3s ease;
+  }
+  .btn-primary {
+    background-color: var(--accent-color); border-color: var(--accent-color);
+  }
+  .btn-primary:hover {
+    background-color: #2980b9; border-color: #2980b9; transform: translateY(-2px);
+  }
+  .btn-secondary { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+  .btn-danger { background-color: var(--danger-color); border-color: var(--danger-color); }
+  .btn-warning {
+    background-color: var(--warning-color); border-color: var(--warning-color);
+    color: var(--primary-color);
+  }
+  .btn-info { color: #fff; background-color: #0dcaf0; border-color: #0dcaf0; }
+  
+  .btn-group { gap: 0.5rem; flex-wrap: wrap; }
+  .table { margin-bottom: 0; }
+  .table thead th {
+    background-color: var(--primary-color); color: white; border-bottom: none; padding: 1rem;
+    position: sticky; top: 0; z-index: 1; /* Sticky header */
+  }
+  /* Alternance de couleurs sur les lignes (zebra) */
+  .table-striped tbody tr:nth-of-type(odd) { background-color: #f9f9f9; }
+  .table-hover tbody tr:hover { background-color: rgba(0,0,0,0.05); }
+  
+  .table tbody td { padding: 0.75rem; vertical-align: middle; }
+  .form-control, .form-select {
+    border-radius: var(--border-radius); border: 1px solid #dee2e6; padding: 0.5rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52,152,219,0.25);
+  }
+  .modal-content {
+    border-radius: var(--border-radius); box-shadow: 0 3px 20px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    background-color: var(--primary-color); color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+  }
+  .modal-header .btn-close { filter: brightness(0) invert(1); }
+  
+  .editable-field:disabled {
+    background-color: transparent; border: none; padding: 0; margin:0; appearance: none;
+  }
+  .editable-field:not(:disabled) { background-color: #fff; border:1px solid #ced4da; padding:.25rem .5rem; }
+  
+  .status-paid { background-color: #d4edda !important; }
+  .status-unpaid { background-color: #f8d7da !important; }
+  .status-pending { background-color: #fff3cd !important; }
 
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f1c40f;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
-            --border-radius: 8px;
-        }
-
-        body {
-            background-color: var(--light-bg);
-            color: var(--primary-color);
-        }
-
-        .container-fluid {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 2rem;
-            border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 1rem;
-        }
-
-        .info-icon {
-            cursor: pointer;
-            color: var(--accent-color);
-            margin-left: 5px;
-            transition: color 0.3s ease;
-        }
-
-        .info-icon:hover {
-            color: var(--primary-color);
-        }
-
-        .table-container {
-            overflow-x: hidden;
-            min-height: 600px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            padding: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            border-radius: var(--border-radius);
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            border-color: var(--warning-color);
-            color: var(--primary-color);
-        }
-
-        .btn-group {
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            background-color: var(--primary-color);
-            color: white;
-            border-bottom: none;
-            padding: 1rem;
-        }
-
-        .table tbody td {
-            padding: 0.75rem;
-            vertical-align: middle;
-        }
-
-        .form-control, .form-select {
-            border-radius: var(--border-radius);
-            border: 1px solid #dee2e6;
-            padding: 0.5rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-        }
-
-        .modal-content {
-            border-radius: var(--border-radius);
-            box-shadow: 0 3px 20px rgba(0,0,0,0.2);
-        }
-
-        .modal-header {
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-
-        .modal-header .btn-close {
-            filter: brightness(0) invert(1);
-        }
-
-        .service-count-badge {
-            font-size: 0.8em;
-            vertical-align: super;
-            margin-left: 5px;
-            cursor: help;
-        }
-
-        .service-types-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .service-types-popup {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            min-width: 150px;
-        }
-        .service-types-container:hover .service-types-popup {
-            display: block;
-        }
-        .service-types-popup ul {
-            margin: 0;
-            padding: 0;
-        }
-        .service-types-popup li {
-            padding: 4px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .service-types-popup li:last-child {
-            border-bottom: none;
-        }
-
-        .editable-field:disabled {
-            background-color: transparent;
-            border: none;
-            padding: 0;
-            margin: 0;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-        .editable-field:not(:disabled) {
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            padding: .25rem .5rem;
-        }
-
-        .status-paid {
-            background-color: #d4edda !important;
-        }
-        .status-unpaid {
-            background-color: #f8d7da !important;
-        }
-        .status-pending {
-            background-color: #fff3cd !important;
-        }
-    </style>
+  /* Mode sombre */
+  body.dark-mode {
+    background-color: #1e1e1e; color: #f0f0f0;
+  }
+  body.dark-mode .table-container { background-color: #2b2b2b; }
+  body.dark-mode .modal-content { background-color: #2b2b2b; color: #f0f0f0; }
+  body.dark-mode .table thead th { background-color: #444 !important; }
+  body.dark-mode .info-icon { color: #ccc; }
+  body.dark-mode .btn-info { color: #333; }
+  </style>
 </head>
 <body>
-    <div class="container-fluid py-4">
-        <h1>Système de Gestion des Paiements</h1>
-        <nav class="mb-4">
-            <a href="talent-payment.html" class="btn btn-outline-primary">
-                <i class="bi bi-person-workspace"></i> Espace Talent
-            </a>
-        </nav>
+  <div class="container-fluid py-4">
+    <h1>Système de Gestion des Paiements</h1>
 
-        <!-- Options de génération -->
-        <div class="action-buttons mb-4">
-            <div class="btn-group" role="group">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
-                    <i class="bi bi-plus-circle"></i> Nouvelle facture
-                </button>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadInvoiceModal">
-                    <i class="bi bi-upload"></i> Importer une facture
-                </button>
-                <button class="btn btn-danger" id="clearPaymentsBtn">
-                    <i class="bi bi-trash"></i> Vider la liste
-                </button>
-                <button class="btn btn-warning" id="toggleEditModeBtn">
-                    <i class="bi bi-pencil-square"></i> Mode édition
-                </button>
-                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#manageTypesModal">
-                    <i class="bi bi-gear"></i> Gérer les types
-                </button>
-            </div>
-        </div>
+    <nav class="mb-4">
+      <a href="talent-payment.html" class="btn btn-outline-primary">
+        <i class="bi bi-person-workspace"></i> Espace Talent
+      </a>
+    </nav>
 
-        <!-- Tableau principal -->
-        <div class="table-container">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Type d'employé 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Catégorie de l'employé">
-                            </i>
-                        </th>
-                        <th>Date 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Date de la prestation effectuée">
-                            </i>
-                        </th>
-                        <th>Quantité 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Quantité du service rendu">
-                            </i>
-                        </th>
-                        <th>Type 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Type de service rendu">
-                            </i>
-                        </th>
-                        <th>Description 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Description ou justification du service">
-                            </i>
-                        </th>
-                        <th>Client 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Nom du client">
-                            </i>
-                        </th>
-                        <th>Tarif unitaire 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Tarif appliqué par unité">
-                            </i>
-                        </th>
-                        <th>Montant total 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Calcul automatique: Quantité × Tarif">
-                            </i>
-                        </th>
-                        <th class="tax-column">Montant taxes 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="TPS (5%) + TVQ (9.975%)">
-                            </i>
-                        </th>
-                        <th class="tax-column">Total + Taxes 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Montant total avec taxes">
-                            </i>
-                        </th>
-                        <th>Approuvé par 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Personne ayant approuvé la dépense">
-                            </i>
-                        </th>
-                        <th>Statut 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="État du paiement">
-                            </i>
-                        </th>
-                        <th>Date paiement 
-                            <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
-                               title="Date du paiement effectué">
-                            </i>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="invoiceTableBody">
-                    <!-- Les lignes seront ajoutées dynamiquement -->
-                </tbody>
-            </table>
-        </div>
+    <!-- Actions principales -->
+    <div class="action-buttons mb-4">
+      <div class="btn-group" role="group">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
+          <i class="bi bi-plus-circle"></i> Nouvelle facture
+        </button>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadInvoiceModal">
+          <i class="bi bi-upload"></i> Importer une facture
+        </button>
+        <button class="btn btn-danger" id="clearPaymentsBtn">
+          <i class="bi bi-trash"></i> Vider la liste
+        </button>
+        <button class="btn btn-warning" id="toggleEditModeBtn">
+          <i class="bi bi-pencil-square"></i> Mode édition
+        </button>
+        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#manageTypesModal">
+          <i class="bi bi-gear"></i> Gérer les types
+        </button>
+        <!-- Bouton d'activation du Dark Mode -->
+        <button class="btn btn-outline-info" id="darkModeToggleBtn">
+          <i class="bi bi-moon-fill"></i> Mode sombre
+        </button>
+      </div>
+      
+      <!-- Champ de recherche (par client) -->
+      <div class="mt-3">
+        <input type="text" id="searchInput" class="form-control" style="max-width:300px;"
+               placeholder="Rechercher un client...">
+      </div>
+    </div>
 
-        <!-- Modal Nouvelle Facture -->
-        <div class="modal fade" id="newInvoiceModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Générer une nouvelle facture</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="newInvoiceForm">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Date de prestation</label>
-                                    <input type="date" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Client</label>
-                                    <input type="text" class="form-control" placeholder="ex: CHOQ MÉDIA" required>
-                                </div>
-                            </div>
+    <!-- Tableau principal -->
+    <div class="table-container">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Type d'employé <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Catégorie de l'employé"></i></th>
+            <th>Date <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Date de la prestation effectuée"></i></th>
+            <th>Quantité <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Quantité du service rendu"></i></th>
+            <th>Type <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Type de service rendu"></i></th>
+            <th>Description <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Description ou justification du service"></i></th>
+            <th>Client <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Nom du client"></i></th>
+            <th>Tarif unitaire <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Tarif appliqué par unité"></i></th>
+            <th>Montant total <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Quantité × Tarif"></i></th>
+            <th class="tax-column">Montant taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="TPS (5%) + TVQ (9.975%)"></i></th>
+            <th class="tax-column">Total + Taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Montant total avec taxes"></i></th>
+            <th>Approuvé par <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Personne ayant approuvé la dépense"></i></th>
+            <th>Statut <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="État du paiement"></i></th>
+            <th>Date paiement <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" 
+                title="Date du paiement effectué"></i></th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody">
+          <!-- Les lignes seront ajoutées dynamiquement -->
+        </tbody>
+      </table>
+    </div>
 
-                            <div id="servicesContainer">
-                                <div class="service-entry mb-3">
-                                    <div class="row mb-2">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Type de service</label>
-                                            <select class="form-select service-type" required>
-                                                <option value="">Sélectionner...</option>
-                                                <!-- Liste initiale, sera mise à jour dynamiquement -->
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Quantité</label>
-                                            <input type="number" class="form-control service-quantity" 
-                                                   min="0" step="0.01" required>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Tarif unitaire</label>
-                                            <input type="number" class="form-control service-price" 
-                                                   min="0" step="0.01" required>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button type="button" class="btn btn-danger form-control remove-service" style="display: none;">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
-                                <i class="bi bi-plus-circle"></i> Ajouter un service
-                            </button>
+    <!-- Résumé / total global -->
+    <div class="mt-3">
+      <h4>Total de tous les paiements : <span id="globalTotal">0.00</span> $</h4>
+    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Description/Justification</label>
-                                <textarea class="form-control" rows="3" 
-                                          placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc.">
-                                </textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="taxCheck">
-                                    <label class="form-check-label" for="taxCheck">
-                                        Charger des taxes
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div id="taxFields" class="d-none">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro NEQ</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro TPS</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro TVQ</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="newInvoiceForm" class="btn btn-primary">Générer</button>
-                    </div>
+    <!-- Espace pour un graphique (Chart.js) -->
+    <div class="my-4">
+      <canvas id="paymentsChart" width="600" height="300"></canvas>
+    </div>
+    
+    <!-- Modal Nouvelle Facture -->
+    <div class="modal fade" id="newInvoiceModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Générer une nouvelle facture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="newInvoiceForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Date de prestation</label>
+                  <input type="date" class="form-control" required>
                 </div>
-            </div>
-        </div>
-
-        <!-- Modal Dépôt Facture Excel -->
-        <div class="modal fade" id="uploadInvoiceModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Déposer une facture Excel</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="uploadInvoiceForm">
-                            <div class="mb-3">
-                                <label class="form-label">Sélectionner le fichier Excel</label>
-                                <input type="file" class="form-control" accept=".xls,.xlsx">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="uploadInvoiceForm" class="btn btn-primary">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                            <span class="btn-text">Déposer</span>
-                        </button>
-                    </div>
+                <div class="col-md-6">
+                  <label class="form-label">Client</label>
+                  <input type="text" class="form-control" placeholder="ex: CHOQ MÉDIA" required>
                 </div>
-            </div>
-        </div>
-
-        <!-- Modal Uniformisation (Exemple) -->
-        <div class="modal fade" id="standardizeInvoiceModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Uniformiser une facture</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div id="servicesContainer">
+                <div class="service-entry mb-3">
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <label class="form-label">Type de service</label>
+                      <select class="form-select service-type" required>
+                        <option value="">Sélectionner...</option>
+                      </select>
                     </div>
-                    <div class="modal-body">
-                        <form id="standardizeInvoiceForm">
-                            <!-- Mêmes champs que le formulaire de nouvelle facture -->
-                            <div class="mb-3">
-                                <label class="form-label">Facture originale</label>
-                                <input type="file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx">
-                            </div>
-                            <!-- Autres champs identiques à newInvoiceForm -->
-                        </form>
+                    <div class="col-md-3">
+                      <label class="form-label">Quantité</label>
+                      <input type="number" class="form-control service-quantity" min="0" step="0.01" required>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="standardizeInvoiceForm" class="btn btn-primary">Uniformiser</button>
+                    <div class="col-md-3">
+                      <label class="form-label">Tarif unitaire</label>
+                      <input type="number" class="form-control service-price" min="0" step="0.01" required>
                     </div>
+                    <div class="col-md-2">
+                      <label class="form-label">&nbsp;</label>
+                      <button type="button" class="btn btn-danger form-control remove-service" style="display: none;">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+              <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
+                <i class="bi bi-plus-circle"></i> Ajouter un service
+              </button>
+              <div class="mb-3">
+                <label class="form-label">Description/Justification</label>
+                <textarea class="form-control" rows="3"
+                  placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc."></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="taxCheck">
+                  <label class="form-check-label" for="taxCheck">
+                    Charger des taxes
+                  </label>
+                </div>
+              </div>
+              <div id="taxFields" class="d-none">
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro NEQ</label>
+                    <input type="text" class="form-control">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro TPS</label>
+                    <input type="text" class="form-control">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro TVQ</label>
+                    <input type="text" class="form-control">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" form="newInvoiceForm" class="btn btn-primary">Générer</button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal Dépôt Facture Excel -->
+    <div class="modal fade" id="uploadInvoiceModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Déposer une facture Excel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="uploadInvoiceForm">
+              <div class="mb-3">
+                <label class="form-label">Sélectionner le fichier Excel</label>
+                <input type="file" class="form-control" accept=".xls,.xlsx">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" form="uploadInvoiceForm" class="btn btn-primary">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="btn-text">Déposer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Uniformisation (Exemple) -->
+    <div class="modal fade" id="standardizeInvoiceModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Uniformiser une facture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="standardizeInvoiceForm">
+              <div class="mb-3">
+                <label class="form-label">Facture originale</label>
+                <input type="file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx">
+              </div>
+              <!-- Autres champs identiques à newInvoiceForm si besoin -->
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" form="standardizeInvoiceForm" class="btn btn-primary">Uniformiser</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Gestion des Types -->
     <div class="modal fade" id="manageTypesModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Gérer les types de services</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nouveau type de service</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="newServiceType" 
-                                   placeholder="ex: Heure de consultation">
-                            <button class="btn btn-primary" id="addServiceType">Ajouter</button>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <h6>Types existants</h6>
-                        <ul class="list-group" id="serviceTypesList">
-                            <!-- Les types seront ajoutés dynamiquement ici -->
-                        </ul>
-                    </div>
-                </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Gérer les types de services</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nouveau type de service</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="newServiceType" placeholder="ex: Heure de consultation">
+                <button class="btn btn-primary" id="addServiceType">Ajouter</button>
+              </div>
             </div>
+            <div class="mt-4">
+              <h6>Types existants</h6>
+              <ul class="list-group" id="serviceTypesList">
+                <!-- Les types seront ajoutés dynamiquement ici -->
+              </ul>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </div><!-- /.container-fluid -->
 
-    <script>
-        // ==============================
-        //        PaymentManager
-        // ==============================
-        class PaymentManager {
-            constructor() {
-                this.payments = [];
-                this.serviceTypes = [];
-                this.loadFromStorage();
-                this.loadServiceTypes();
-            }
-
-            // ----- Types de services -----
-            loadServiceTypes() {
-                try {
-                    const stored = localStorage.getItem('serviceTypes');
-                    if (stored) {
-                        this.serviceTypes = JSON.parse(stored);
-                    } else {
-                        // Types par défaut si aucun n'existe
-                        this.serviceTypes = [
-                            'Heure standard',
-                            'Heure de tournage',
-                            'Heure de montage',
-                            'Vidéo TikTok',
-                            'Vidéo Short',
-                            'Vidéo YouTube',
-                            'Déplacement (Km)',
-                            'Prime de repas',
-                            'Prime d\'hébergement'
-                        ];
-                        this.saveServiceTypes();
-                    }
-                } catch (error) {
-                    console.error('Erreur lors du chargement des types:', error);
-                    this.serviceTypes = [];
-                }
-                return this.serviceTypes;
-            }
-
-            saveServiceTypes() {
-                try {
-                    localStorage.setItem('serviceTypes', JSON.stringify(this.serviceTypes));
-                } catch (error) {
-                    console.error('Erreur lors de la sauvegarde des types:', error);
-                }
-            }
-
-            addServiceType(type) {
-                if (!this.serviceTypes.includes(type)) {
-                    this.serviceTypes.push(type);
-                    this.saveServiceTypes();
-                    return true;
-                }
-                return false;
-            }
-
-            removeServiceType(type) {
-                const index = this.serviceTypes.indexOf(type);
-                if (index > -1) {
-                    this.serviceTypes.splice(index, 1);
-                    this.saveServiceTypes();
-                    return true;
-                }
-                return false;
-            }
-
-            // ----- Paiements -----
-            loadFromStorage() {
-                try {
-                    const stored = localStorage.getItem('payments');
-                    if (stored) {
-                        this.payments = JSON.parse(stored);
-                    }
-                } catch (error) {
-                    console.error('Erreur lors du chargement des paiements:', error);
-                    this.payments = [];
-                }
-            }
-
-            async loadPayments() {
-                return [...this.payments];
-            }
-
-            async savePayment(payment) {
-                try {
-                    payment.id = Date.now().toString();
-                    payment.createdAt = new Date().toISOString();
-                    this.payments.push(payment);
-                    localStorage.setItem('payments', JSON.stringify(this.payments));
-                    return payment;
-                } catch (error) {
-                    console.error('Erreur lors de la sauvegarde du paiement:', error);
-                    throw error;
-                }
-            }
-
-            clearPayments() {
-                this.payments = [];
-                localStorage.removeItem('payments');
-            }
-
-            // Ajout pour permettre la mise à jour en mode édition
-            updatePayment(id, updatedFields) {
-                const index = this.payments.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    // Mettre à jour les champs existants
-                    Object.assign(this.payments[index], updatedFields);
-                    // Sauvegarde dans localStorage
-                    localStorage.setItem('payments', JSON.stringify(this.payments));
-                    return this.payments[index];
-                }
-                return null;
-            }
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- SheetJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+  // ==============================
+  //        PaymentManager
+  // ==============================
+  class PaymentManager {
+    constructor(){
+      this.payments = [];
+      this.serviceTypes = [];
+      this.loadFromStorage();
+      this.loadServiceTypes();
+    }
+    // ----- Types de services -----
+    loadServiceTypes() {
+      try {
+        const stored = localStorage.getItem('serviceTypes');
+        if(stored) {
+          this.serviceTypes = JSON.parse(stored);
+        } else {
+          this.serviceTypes = [
+            'Heure standard','Heure de tournage','Heure de montage',
+            'Vidéo TikTok','Vidéo Short','Vidéo YouTube',
+            'Déplacement (Km)','Prime de repas','Prime d\'hébergement'
+          ];
+          this.saveServiceTypes();
         }
+      } catch(e) {
+        console.error('Erreur chargement types:', e);
+        this.serviceTypes = [];
+      }
+      return this.serviceTypes;
+    }
+    saveServiceTypes() {
+      try {
+        localStorage.setItem('serviceTypes', JSON.stringify(this.serviceTypes));
+      } catch(e) { console.error('Erreur sauvegarde types:', e); }
+    }
+    addServiceType(type) {
+      if(!this.serviceTypes.includes(type)) {
+        this.serviceTypes.push(type);
+        this.saveServiceTypes();
+        return true;
+      }
+      return false;
+    }
+    removeServiceType(type){
+      const idx = this.serviceTypes.indexOf(type);
+      if(idx > -1){
+        this.serviceTypes.splice(idx,1);
+        this.saveServiceTypes();
+        return true;
+      }
+      return false;
+    }
+    // ----- Paiements -----
+    loadFromStorage(){
+      try {
+        const stored = localStorage.getItem('payments');
+        if(stored) this.payments = JSON.parse(stored);
+      } catch(e) {
+        console.error('Erreur chargement paiements:', e);
+        this.payments = [];
+      }
+    }
+    async loadPayments(){ return [...this.payments]; }
+    async savePayment(payment){
+      try {
+        payment.id = Date.now().toString();
+        payment.createdAt = new Date().toISOString();
+        this.payments.push(payment);
+        localStorage.setItem('payments', JSON.stringify(this.payments));
+        return payment;
+      } catch(e) {
+        console.error('Erreur sauvegarde paiement:', e);
+        throw e;
+      }
+    }
+    clearPayments(){
+      this.payments = [];
+      localStorage.removeItem('payments');
+    }
+    updatePayment(id, updatedFields){
+      const idx = this.payments.findIndex(p => p.id===id);
+      if(idx!==-1){
+        Object.assign(this.payments[idx], updatedFields);
+        localStorage.setItem('payments', JSON.stringify(this.payments));
+        return this.payments[idx];
+      }
+      return null;
+    }
+  }
 
-        // ==============================
-        //         ExcelReader
-        // ==============================
-        class ExcelReader {
-            constructor() {
-                this.error = '';
-            }
-
-            async readExcelFile(file) {
-                try {
-                    // Convertir le fichier en ArrayBuffer
-                    const arrayBuffer = await file.arrayBuffer();
-
-                    // Lire le workbook (classeur) avec SheetJS
-                    const workbook = XLSX.read(arrayBuffer, {
-                        cellStyles: true,
-                        cellFormulas: true,
-                        cellDates: true,
-                        cellNF: true,
-                        sheetStubs: true
-                    });
-
-                    // Extraire les données de toutes les feuilles
-                    const allSheetsData = {};
-                    workbook.SheetNames.forEach(sheetName => {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-                            header: 1,
-                            raw: false,
-                            blankrows: false,
-                            defval: ''
-                        });
-                        allSheetsData[sheetName] = jsonData;
-                    });
-
-                    return allSheetsData;
-                } catch (err) {
-                    this.error = `Erreur lors du traitement du fichier : ${err.message}`;
-                    throw err;
-                }
-            }
-        }
-
-        // ==============================
-        //  parseRemunerationSheet
-        // ==============================
-        function parseRemunerationSheet(allSheetsData) {
-            // Hypothèse : la feuille se nomme "Rémunération"
-            if (!allSheetsData['Rémunération']) {
-                console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
-                return [];
-            }
-
-            const rows = allSheetsData['Rémunération'];
-            const payments = [];
-
-            // On suppose que les données utiles commencent vers la ligne 7
-            for (let i = 7; i < rows.length; i++) {
-                const row = rows[i];
-                if (!row || row.length < 9) continue;
-
-                // Indices potentiels selon l’exemple
-                const dateStr = (row[1] || '').toString().trim();
-                const quantityStr = (row[4] || '').toString().trim();
-                const type = (row[5] || '').toString().trim();
-                const description = (row[6] || '').toString().trim();
-                const client = (row[7] || '').toString().trim();
-                const unitPriceStr = (row[8] || '').toString().trim();
-
-                if (!dateStr || !type || !client) continue;
-
-                const quantity = parseFloat(quantityStr.replace('$',''));
-                const unitPrice = parseFloat(unitPriceStr.replace('$',''));
-                if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) {
-                    continue;
-                }
-
-                // Construire l'objet payment
-                const payment = {
-                    date: dateStr,
-                    client: client,
-                    employeeType: '', // on peut le laisser vide
-                    services: [{
-                        type: type,
-                        quantity: quantity,
-                        unitPrice: unitPrice,
-                        description: description
-                    }],
-                    hasTaxes: false,
-                    status: "pending"
-                };
-
-                const total = quantity * unitPrice;
-                payment.total = parseFloat(total.toFixed(2));
-                payment.taxAmount = 0;
-                payment.totalWithTaxes = payment.total;
-
-                payments.push(payment);
-            }
-
-            return payments;
-        }
-
-        // ==============================
-        //   Script Principal (DOM)
-        // ==============================
-        let paymentManager;
-        document.addEventListener('DOMContentLoaded', () => {
-            // Instancier PaymentManager
-            paymentManager = new PaymentManager();
-            
-            // Activer les tooltips de Bootstrap
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-            // Charger les paiements existants
-            (async function loadInitialPayments() {
-                const payments = await paymentManager.loadPayments();
-                payments.forEach(payment => addInvoiceRow(payment));
-            })();
-
-            // Bouton : Vider la liste
-            $('#clearPaymentsBtn').click(function() {
-                if (confirm('Êtes-vous sûr de vouloir vider la liste des paiements ?')) {
-                    paymentManager.clearPayments();
-                    $('#invoiceTableBody').empty();
-                }
-            });
-
-            // Affichage / Masquage des champs de taxes
-            $('#taxCheck').change(function() {
-                $('#taxFields').toggleClass('d-none', !this.checked);
-                $('.tax-column').toggleClass('d-none', !this.checked);
-            });
-
-            // Calcul automatique des montants
-            function calculateAmounts() {
-                let total = 0;
-                $('.service-entry').each(function() {
-                    const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
-                    const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
-                    total += quantity * unitPrice;
-                });
-                
-                if ($('#taxCheck').is(':checked')) {
-                    const taxes = total * 0.14975; // 5% TPS + 9.975% TVQ
-                    const totalWithTaxes = total + taxes;
-                    return {
-                        subtotal: total.toFixed(2),
-                        taxes: taxes.toFixed(2),
-                        total: totalWithTaxes.toFixed(2)
-                    };
-                }
-                return {
-                    subtotal: total.toFixed(2),
-                    taxes: '0.00',
-                    total: total.toFixed(2)
-                };
-            }
-
-            // Services multiples dans la modal "Nouvelle facture"
-            $('#addServiceBtn').click(function() {
-                const newService = $('.service-entry:first').clone();
-                newService.find('input').val('');
-                newService.find('select').val('');
-                newService.find('.remove-service').show();
-                $('#servicesContainer').append(newService);
-            });
-
-            $(document).on('click', '.remove-service', function() {
-                if ($('.service-entry').length > 1) {
-                    $(this).closest('.service-entry').remove();
-                }
-            });
-
-            $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
-
-            // Gérer le formulaire d’upload Excel (Import)
-            $('#uploadInvoiceForm').on('submit', async function(e) {
-                e.preventDefault();
-                const file = $(this).find('input[type="file"]').prop('files')[0];
-                if (!file) {
-                    alert('Veuillez sélectionner un fichier Excel');
-                    return;
-                }
-
-                // Activer le spinner
-                const submitBtn = $(this).find('button[type="submit"]');
-                const originalText = submitBtn.find('.btn-text').text();
-                submitBtn.prop('disabled', true);
-                submitBtn.find('.spinner-border').removeClass('d-none');
-                submitBtn.find('.btn-text').text('Traitement...');
-
-                try {
-                    const excelReader = new ExcelReader();
-                    const allSheetsData = await excelReader.readExcelFile(file);
-
-                    if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
-                        throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
-                    }
-
-                    const parsedPayments = parseRemunerationSheet(allSheetsData);
-
-                    if (parsedPayments.length === 0) {
-                        alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
-                    } else {
-                        for (const payment of parsedPayments) {
-                            const savedPayment = await paymentManager.savePayment(payment);
-                            addInvoiceRow(savedPayment);
-                        }
-                        alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
-                    }
-
-                    // Fermer la modal et réinitialiser le formulaire
-                    $('#uploadInvoiceModal').modal('hide');
-                    this.reset();
-
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
-                } finally {
-                    // Réinitialiser le bouton
-                    submitBtn.prop('disabled', false);
-                    submitBtn.find('.spinner-border').addClass('d-none');
-                    submitBtn.find('.btn-text').text(originalText);
-                }
-            });
-
-            // Gérer la soumission du formulaire "Nouvelle facture"
-            $('#newInvoiceForm').on('submit', async function(e) {
-                e.preventDefault();
-                try {
-                    const formData = {
-                        date: $(this).find('input[type="date"]').first().val(),
-                        client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
-                        services: [],
-                        hasTaxes: $('#taxCheck').is(':checked'),
-                        status: "pending"
-                    };
-
-                    // Récupérer toutes les lignes de services
-                    const descriptionText = $(this).find('textarea').val() || '';
-                    $('.service-entry').each(function() {
-                        const service = {
-                            type: $(this).find('.service-type').val(),
-                            quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
-                            unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
-                            description: descriptionText
-                        };
-                        if (service.type && service.quantity > 0 && service.unitPrice > 0) {
-                            formData.services.push(service);
-                        }
-                    });
-
-                    if (formData.services.length === 0) {
-                        throw new Error('Au moins un service doit être spécifié');
-                    }
-
-                    const amounts = calculateAmounts();
-                    formData.total = parseFloat(amounts.subtotal);
-                    formData.taxAmount = parseFloat(amounts.taxes);
-                    formData.totalWithTaxes = parseFloat(amounts.total);
-
-                    if (formData.hasTaxes) {
-                        formData.taxInfo = {
-                            neq: $('#taxFields input').eq(0).val(),
-                            tps: $('#taxFields input').eq(1).val(),
-                            tvq: $('#taxFields input').eq(2).val()
-                        };
-                    }
-
-                    // Sauvegarde + ajout au tableau
-                    const savedPayment = await paymentManager.savePayment(formData);
-                    addInvoiceRow(savedPayment);
-
-                    // Fermer la modal + reset
-                    $('#newInvoiceModal').modal('hide');
-                    this.reset();
-                    // Masquer à nouveau les champs de taxes si cochés
-                    $('#taxFields').addClass('d-none');
-                    $('.tax-column').addClass('d-none');
-
-                } catch (error) {
-                    alert('Erreur lors de la sauvegarde de la facture : ' + error.message);
-                }
-            });
-
-            // Ajoute une nouvelle ligne dans le tableau HTML
-            function addInvoiceRow(data) {
-                const formatValue = (value, defaultValue = '-') => {
-                    return value !== null && value !== undefined ? value : defaultValue;
-                };
-
-                // On n’affiche que le 1er service dans la ligne principale, 
-                // les autres services (s’il y en a) sont visibles au survol.
-                const row = `
-                    <tr id="payment-${data.id}" class="payment-row">
-                        <td>
-                            <input type="text" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.employeeType, 'Non spécifié')}" 
-                                   disabled>
-                        </td>
-                        <td style="min-width: 150px;">
-                            <input type="date" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.date)}" 
-                                   disabled>
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.services[0].quantity, 0)}" 
-                                   disabled>
-                        </td>
-                        <td>
-                            <div class="service-types-container">
-                                <select class="form-control form-control-sm editable-field service-type-input" 
-                                        disabled>
-                                    <option value="">Sélectionner...</option>
-                                    ${paymentManager.serviceTypes.map(type => `
-                                        <option value="${type}" ${type === data.services[0].type ? 'selected' : ''}>
-                                            ${type}
-                                        </option>
-                                    `).join('')}
-                                </select>
-                                ${
-                                    data.services.length > 1
-                                    ? `
-                                        <div class="service-types-popup">
-                                            <ul class="list-unstyled mb-0">
-                                                ${data.services.map(service => `
-                                                    <li>
-                                                        ${service.type}
-                                                        <small class="text-muted">
-                                                            (${service.quantity} × ${service.unitPrice}$ 
-                                                             = ${(service.quantity * service.unitPrice).toFixed(2)}$)
-                                                        </small>
-                                                    </li>
-                                                `).join('')}
-                                            </ul>
-                                        </div>
-                                      `
-                                    : ''
-                                }
-                            </div>
-                        </td>
-                        <td>
-                            <div class="service-types-container">
-                                <input type="text" 
-                                       class="form-control form-control-sm editable-field description-input" 
-                                       value="${formatValue(data.services[0].description || '')}"
-                                       disabled>
-                                ${
-                                    data.services[0].description
-                                    ? `
-                                        <div class="service-types-popup">
-                                            <div class="description-full">
-                                                ${formatValue(data.services[0].description)}
-                                            </div>
-                                        </div>
-                                      `
-                                    : ''
-                                }
-                            </div>
-                        </td>
-                        <td>
-                            <input type="text" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.client)}"
-                                   disabled>
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.services[0].unitPrice, '0.00')}"
-                                   step="0.01"
-                                   disabled>
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${formatValue(data.total, '0.00')}"
-                                   step="0.01"
-                                   disabled>
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : '0.00'}"
-                                   step="0.01"
-                                   disabled>
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="form-control form-control-sm editable-field" 
-                                   value="${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}"
-                                   step="0.01"
-                                   disabled>
-                        </td>
-                        <td style="min-width: 150px;">
-                            <select class="form-select form-select-sm approver-select" data-id="${data.id}">
-                                <option value="">Sélectionner...</option>
-                                <option value="joey" ${data.approvedBy === 'joey' ? 'selected' : ''}>Joey</option>
-                                <option value="benoit-xavier" ${data.approvedBy === 'benoit-xavier' ? 'selected' : ''}>Benoit-Xavier</option>
-                                <option value="eloise" ${data.approvedBy === 'eloise' ? 'selected' : ''}>Éloïse</option>
-                            </select>
-                        </td>
-                        <td style="min-width: 120px;">
-                            <select class="form-select form-select-sm status-select" data-id="${data.id}">
-                                <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>En attente</option>
-                                <option value="approved" ${data.status === 'approved' ? 'selected' : ''}>Approuvé</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" 
-                                   class="form-control form-control-sm payment-date editable-field"
-                                   value="${formatValue(data.paymentDate, '')}"
-                                   data-id="${data.id}">
-                        </td>
-                    </tr>
-                `;
-                $('#invoiceTableBody').append(row);
-                // Réinitialiser tooltips pour ce nouvel élément
-                $('[data-bs-toggle="tooltip"]').tooltip();
-            }
-
-            // Gestion des selects "statut" (pour colorer éventuellement)
-            $(document).on('change', '.status-select', function() {
-                const row = $(this).closest('tr');
-                row.removeClass('status-paid status-unpaid status-pending');
-                row.addClass('status-' + $(this).val());
-            });
-
-            // Gérer la liste des types de service
-            function updateServiceTypesList() {
-                const types = paymentManager.loadServiceTypes();
-                const $list = $('#serviceTypesList').empty();
-                const $selects = $('.service-type');
-                
-                types.forEach(type => {
-                    // Ajouter chaque type dans la liste de la modal
-                    const $item = $(`
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${type}
-                            <button class="btn btn-danger btn-sm delete-type" data-type="${type}">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </li>
-                    `);
-                    $list.append($item);
-                });
-
-                // Mettre à jour tous les <select> "service-type"
-                $selects.each(function() {
-                    const currentValue = $(this).val();
-                    $(this).empty().append('<option value="">Sélectionner...</option>');
-                    types.forEach(type => {
-                        $(this).append(
-                            `<option value="${type}" ${type === currentValue ? 'selected' : ''}>${type}</option>`
-                        );
-                    });
-                });
-            }
-
-            // Ajouter un nouveau type
-            $('#addServiceType').click(function() {
-                const newType = $('#newServiceType').val().trim();
-                if (newType) {
-                    if (paymentManager.addServiceType(newType)) {
-                        updateServiceTypesList();
-                        $('#newServiceType').val('');
-                    } else {
-                        alert('Ce type existe déjà');
-                    }
-                }
-            });
-
-            // Supprimer un type
-            $(document).on('click', '.delete-type', function() {
-                const type = $(this).data('type');
-                if (confirm(`Êtes-vous sûr de vouloir supprimer le type "${type}" ?`)) {
-                    paymentManager.removeServiceType(type);
-                    updateServiceTypesList();
-                }
-            });
-
-            // Initialiser la liste des types au chargement
-            updateServiceTypesList();
-
-            // Mode édition (activer/désactiver les champs)
-            let editModeEnabled = false;
-            $('#toggleEditModeBtn').click(function() {
-                editModeEnabled = !editModeEnabled;
-                $(this).toggleClass('btn-warning btn-success');
-                $(this).text(editModeEnabled ? 'Sauvegarder' : 'Mode édition');
-                $('.editable-field').prop('disabled', !editModeEnabled);
-            });
-
-            // Mise à jour des données en localStorage à chaque changement
-            $(document).on('change', 
-                '.approver-select, .status-select, .payment-date, .editable-field',
-                async function() {
-                    const row = $(this).closest('tr');
-                    const id = row.attr('id').replace('payment-', '');
-
-                    // Récupérer tous les champs
-                    const employeeType = row.find('.editable-field').eq(0).val();
-                    const date = row.find('.editable-field').eq(1).val();
-                    const quantity = row.find('.editable-field').eq(2).val();
-
-                    // Approuvé par, statut, date paiement
-                    const approvedBy = row.find('.approver-select').val();
-                    const status = row.find('.status-select').val();
-                    const paymentDate = row.find('.payment-date').val();
-
-                    const updatedPayment = {
-                        employeeType,
-                        date,
-                        // Si on gérait la quantité globale (s'il n'y a qu'un seul service):
-                        // => On pourrait re-calculer le total, etc., 
-                        //    mais ici on se limite à la démo de la mise à jour
-                        quantity,
-                        approvedBy,
-                        status,
-                        paymentDate
-                    };
-
-                    paymentManager.updatePayment(id, updatedPayment);
-                }
-            );
+  // ==============================
+  //         ExcelReader
+  // ==============================
+  class ExcelReader {
+    constructor(){ this.error=''; }
+    async readExcelFile(file) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, {
+          cellStyles:true, cellFormulas:true, cellDates:true, cellNF:true, sheetStubs:true
         });
-    </script>
+        const allSheetsData = {};
+        workbook.SheetNames.forEach(sheetName=>{
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet,{
+            header:1, raw:false, blankrows:false, defval:''
+          });
+          allSheetsData[sheetName]=jsonData;
+        });
+        return allSheetsData;
+      } catch(err) {
+        this.error = 'Erreur traitement fichier: ' + err.message;
+        throw err;
+      }
+    }
+  }
+
+  // ==============================
+  //  parseRemunerationSheet
+  // ==============================
+  function parseRemunerationSheet(allSheetsData){
+    if(!allSheetsData['Rémunération']){
+      console.warn('Feuille "Rémunération" introuvable.');
+      return [];
+    }
+    const rows = allSheetsData['Rémunération'];
+    const payments = [];
+    for(let i=7;i<rows.length;i++){
+      const row=rows[i];
+      if(!row || row.length<9) continue;
+      const dateStr=(row[1]||'').toString().trim();
+      const quantityStr=(row[4]||'').toString().trim();
+      const type=(row[5]||'').toString().trim();
+      const description=(row[6]||'').toString().trim();
+      const client=(row[7]||'').toString().trim();
+      const unitPriceStr=(row[8]||'').toString().trim();
+      if(!dateStr||!type||!client) continue;
+      const quantity=parseFloat(quantityStr.replace('$',''));
+      const unitPrice=parseFloat(unitPriceStr.replace('$',''));
+      if(isNaN(quantity)||isNaN(unitPrice)||quantity<=0||unitPrice<=0){ continue; }
+      const payment={
+        date: dateStr, client: client, employeeType:'', services:[{
+          type:type, quantity:quantity, unitPrice:unitPrice, description:description
+        }], hasTaxes:false, status:'pending'
+      };
+      const total=quantity*unitPrice;
+      payment.total=parseFloat(total.toFixed(2));
+      payment.taxAmount=0; payment.totalWithTaxes=payment.total;
+      payments.push(payment);
+    }
+    return payments;
+  }
+
+  // ==============================
+  //   Script Principal (DOM)
+  // ==============================
+  let paymentManager, paymentsChart;
+  document.addEventListener('DOMContentLoaded', ()=>{
+    paymentManager = new PaymentManager();
+    const tooltipTriggerList=[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(t => new bootstrap.Tooltip(t));
+
+    // Charger les paiements existants + affichage
+    (async function loadInitialPayments(){
+      const payments = await paymentManager.loadPayments();
+      payments.forEach(p => addInvoiceRow(p));
+      updateGlobalTotal();
+      updateChart();
+    })();
+
+    // Bouton: Vider la liste
+    $('#clearPaymentsBtn').click(function(){
+      if(confirm('Vider la liste des paiements ?')){
+        paymentManager.clearPayments();
+        $('#invoiceTableBody').empty();
+        updateGlobalTotal();
+        updateChart();
+      }
+    });
+
+    // Affichage/Masquage des champs de taxes
+    $('#taxCheck').change(function(){
+      $('#taxFields').toggleClass('d-none', !this.checked);
+      $('.tax-column').toggleClass('d-none', !this.checked);
+    });
+
+    // Calcul automatique des montants dans la modal "Nouvelle facture"
+    function calculateModalAmounts(){
+      let total=0;
+      $('.service-entry').each(function(){
+        const q=parseFloat($(this).find('.service-quantity').val())||0;
+        const u=parseFloat($(this).find('.service-price').val())||0;
+        total+=(q*u);
+      });
+      if($('#taxCheck').is(':checked')){
+        const taxes=total*0.14975;
+        return {
+          subtotal: total.toFixed(2),
+          taxes: taxes.toFixed(2),
+          total: (total+taxes).toFixed(2)
+        };
+      }
+      return {
+        subtotal: total.toFixed(2), taxes:'0.00', total: total.toFixed(2)
+      };
+    }
+    $('#addServiceBtn').click(function(){
+      const newServ = $('.service-entry:first').clone();
+      newServ.find('input').val('');
+      newServ.find('select').val('');
+      newServ.find('.remove-service').show();
+      $('#servicesContainer').append(newServ);
+    });
+    $(document).on('click','.remove-service',function(){
+      if($('.service-entry').length>1){
+        $(this).closest('.service-entry').remove();
+      }
+    });
+    $(document).on('input','.service-quantity,.service-price',calculateModalAmounts);
+
+    // Upload Excel (Import)
+    $('#uploadInvoiceForm').on('submit', async function(e){
+      e.preventDefault();
+      const file=$(this).find('input[type="file"]').prop('files')[0];
+      if(!file){ alert('Veuillez sélectionner un fichier Excel'); return; }
+      const submitBtn=$(this).find('button[type="submit"]');
+      const originalText=submitBtn.find('.btn-text').text();
+      submitBtn.prop('disabled',true);
+      submitBtn.find('.spinner-border').removeClass('d-none');
+      submitBtn.find('.btn-text').text('Traitement...');
+      try {
+        const excelReader=new ExcelReader();
+        const allSheetsData=await excelReader.readExcelFile(file);
+        if(!allSheetsData || Object.keys(allSheetsData).length===0){
+          throw new Error('Aucune donnée trouvée dans le fichier');
+        }
+        const parsedPayments=parseRemunerationSheet(allSheetsData);
+        if(parsedPayments.length===0){
+          alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
+        } else {
+          for(const payment of parsedPayments){
+            const saved=await paymentManager.savePayment(payment);
+            addInvoiceRow(saved);
+          }
+          alert(`${parsedPayments.length} facture(s) importée(s) avec succès!`);
+          updateGlobalTotal(); updateChart();
+        }
+        $('#uploadInvoiceModal').modal('hide');
+        this.reset();
+      } catch(error){
+        console.error('Erreur:',error);
+        alert('Erreur lors du traitement Excel: '+error.message);
+      } finally {
+        submitBtn.prop('disabled',false);
+        submitBtn.find('.spinner-border').addClass('d-none');
+        submitBtn.find('.btn-text').text(originalText);
+      }
+    });
+
+    // Formulaire "Nouvelle facture"
+    $('#newInvoiceForm').on('submit', async function(e){
+      e.preventDefault();
+      try {
+        const formData={
+          date: $(this).find('input[type="date"]').first().val(),
+          client: $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val(),
+          services:[],
+          hasTaxes: $('#taxCheck').is(':checked'),
+          status:'pending'
+        };
+        const descriptionText=$(this).find('textarea').val()||'';
+        $('.service-entry').each(function(){
+          const sType=$(this).find('.service-type').val();
+          const sQty=parseFloat($(this).find('.service-quantity').val())||0;
+          const sPrice=parseFloat($(this).find('.service-price').val())||0;
+          if(sType && sQty>0 && sPrice>0){
+            formData.services.push({
+              type:sType, quantity:sQty, unitPrice:sPrice, description:descriptionText
+            });
+          }
+        });
+        if(formData.services.length===0){
+          throw new Error('Au moins un service doit être spécifié');
+        }
+        const amounts=calculateModalAmounts();
+        formData.total=parseFloat(amounts.subtotal);
+        formData.taxAmount=parseFloat(amounts.taxes);
+        formData.totalWithTaxes=parseFloat(amounts.total);
+        if(formData.hasTaxes){
+          formData.taxInfo={
+            neq: $('#taxFields input').eq(0).val(),
+            tps: $('#taxFields input').eq(1).val(),
+            tvq: $('#taxFields input').eq(2).val()
+          };
+        }
+        const savedPayment=await paymentManager.savePayment(formData);
+        addInvoiceRow(savedPayment);
+        $('#newInvoiceModal').modal('hide');
+        this.reset();
+        $('#taxFields').addClass('d-none');
+        $('.tax-column').addClass('d-none');
+        updateGlobalTotal();
+        updateChart();
+      } catch(err){
+        alert('Erreur lors de la sauvegarde: '+ err.message);
+      }
+    });
+
+    // Ajouter une ligne dans le tableau
+    function addInvoiceRow(data){
+      const formatVal=(val,df='-')=> val!==null && val!==undefined ? val : df;
+      const row=`
+      <tr id="payment-${data.id}" class="payment-row">
+        <td>
+          <input type="text" class="form-control form-control-sm editable-field"
+            value="${formatVal(data.employeeType,'Non spécifié')}" disabled>
+        </td>
+        <td style="min-width:150px;">
+          <input type="date" class="form-control form-control-sm editable-field" 
+            value="${formatVal(data.date)}" disabled>
+        </td>
+        <td>
+          <input type="number" class="form-control form-control-sm editable-field"
+            value="${formatVal(data.services[0].quantity,0)}" disabled>
+        </td>
+        <td>
+          <div class="service-types-container">
+            <select class="form-control form-control-sm editable-field service-type-input" disabled>
+              <option value="">Sélectionner...</option>
+              ${paymentManager.serviceTypes.map(t=>`
+                <option value="${t}" ${t===data.services[0].type?'selected':''}>${t}</option>
+              `).join('')}
+            </select>
+            ${
+              data.services.length>1
+              ? `<div class="service-types-popup" style="display:none; position:absolute; background:white; 
+                     border:1px solid #ddd; border-radius:4px; padding:8px 12px; z-index:1000; min-width:150px;">
+                   <ul class="list-unstyled mb-0">
+                     ${data.services.map(s=>`
+                       <li>${s.type} <small class="text-muted">
+                         (${s.quantity} × ${s.unitPrice} $ = ${(s.quantity*s.unitPrice).toFixed(2)} $)
+                       </small></li>
+                     `).join('')}
+                   </ul>
+                 </div>`
+              :''
+            }
+          </div>
+        </td>
+        <td>
+          <div class="service-types-container">
+            <input type="text" class="form-control form-control-sm editable-field description-input"
+              value="${formatVal(data.services[0].description||'')}" disabled>
+          </div>
+        </td>
+        <td>
+          <input type="text" class="form-control form-control-sm editable-field"
+            value="${formatVal(data.client)}" disabled>
+        </td>
+        <td>
+          <input type="number" class="form-control form-control-sm editable-field" step="0.01"
+            value="${formatVal(data.services[0].unitPrice,'0.00')}" disabled>
+        </td>
+        <td>
+          <input type="number" class="form-control form-control-sm editable-field" step="0.01"
+            value="${formatVal(data.total,'0.00')}" disabled>
+        </td>
+        <td>
+          <input type="number" class="form-control form-control-sm editable-field" step="0.01"
+            value="${data.hasTaxes ? formatVal(data.taxAmount,'0.00'):'0.00'}" disabled>
+        </td>
+        <td>
+          <input type="number" class="form-control form-control-sm editable-field" step="0.01"
+            value="${data.hasTaxes ? formatVal(data.totalWithTaxes,'0.00'):formatVal(data.total,'0.00')}" disabled>
+        </td>
+        <td style="min-width:150px;">
+          <select class="form-select form-select-sm approver-select" data-id="${data.id}">
+            <option value="">Sélectionner...</option>
+            <option value="joey" ${data.approvedBy==='joey'?'selected':''}>Joey</option>
+            <option value="benoit-xavier" ${data.approvedBy==='benoit-xavier'?'selected':''}>Benoit-Xavier</option>
+            <option value="eloise" ${data.approvedBy==='eloise'?'selected':''}>Éloïse</option>
+          </select>
+        </td>
+        <td style="min-width:120px;">
+          <select class="form-select form-select-sm status-select" data-id="${data.id}">
+            <option value="pending" ${data.status==='pending'?'selected':''}>En attente</option>
+            <option value="approved" ${data.status==='approved'?'selected':''}>Approuvé</option>
+          </select>
+        </td>
+        <td>
+          <input type="date" class="form-control form-control-sm payment-date editable-field"
+            data-id="${data.id}" value="${formatVal(data.paymentDate,'')}">
+        </td>
+      </tr>`;
+      $('#invoiceTableBody').append(row);
+      $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    // Mise à jour visuelle du statut
+    $(document).on('change','.status-select',function(){
+      const row=$(this).closest('tr');
+      row.removeClass('status-paid status-unpaid status-pending');
+      row.addClass('status-'+$(this).val());
+      updateChart();
+    });
+
+    // Gérer liste des types
+    function updateServiceTypesList(){
+      const types=paymentManager.loadServiceTypes();
+      const $list=$('#serviceTypesList').empty();
+      const $selects=$('.service-type');
+      types.forEach(type=>{
+        const $item=$(`
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            ${type}
+            <button class="btn btn-danger btn-sm delete-type" data-type="${type}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </li>`);
+        $list.append($item);
+      });
+      $selects.each(function(){
+        const curVal=$(this).val();
+        $(this).empty().append('<option value="">Sélectionner...</option>');
+        types.forEach(t=>{
+          $(this).append(`<option value="${t}" ${t===curVal?'selected':''}>${t}</option>`);
+        });
+      });
+    }
+    $('#addServiceType').click(function(){
+      const newType=$('#newServiceType').val().trim();
+      if(newType){
+        if(paymentManager.addServiceType(newType)){
+          updateServiceTypesList();
+          $('#newServiceType').val('');
+        } else {
+          alert('Ce type existe déjà.');
+        }
+      }
+    });
+    $(document).on('click','.delete-type',function(){
+      const t=$(this).data('type');
+      if(confirm(`Supprimer le type "${t}"?`)){
+        paymentManager.removeServiceType(t);
+        updateServiceTypesList();
+      }
+    });
+    updateServiceTypesList();
+
+    // Mode édition
+    let editMode=false;
+    $('#toggleEditModeBtn').click(function(){
+      editMode=!editMode;
+      $(this).toggleClass('btn-warning btn-success');
+      $(this).text(editMode ? 'Sauvegarder' : 'Mode édition');
+      $('.editable-field').prop('disabled', !editMode);
+      if(!editMode){
+        // On pourrait forcer la sauvegarde ici si souhaité
+      }
+    });
+
+    // Recherche (filtrage) par client
+    $('#searchInput').on('input', function(){
+      const val=this.value.toLowerCase();
+      $('#invoiceTableBody tr').each(function(){
+        const clientCell=$(this).find('td:nth-child(6) input');
+        if(!clientCell.length)return;
+        const text=clientCell.val().toLowerCase();
+        $(this).toggle(text.includes(val));
+      });
+    });
+
+    // Mise à jour localStorage à chaque changement
+    $(document).on('change','.approver-select,.status-select,.payment-date,.editable-field',async function(){
+      const row=$(this).closest('tr');
+      const id=row.attr('id').replace('payment-','');
+      const employeeType=row.find('.editable-field').eq(0).val();
+      const date=row.find('.editable-field').eq(1).val();
+      const quantity=row.find('.editable-field').eq(2).val();
+      const approvedBy=row.find('.approver-select').val();
+      const status=row.find('.status-select').val();
+      const paymentDate=row.find('.payment-date').val();
+      const updated={
+        employeeType, date, quantity, approvedBy, status, paymentDate
+      };
+      paymentManager.updatePayment(id, updated);
+      updateGlobalTotal();
+      updateChart();
+    });
+
+    // Calcul du total global
+    function updateGlobalTotal(){
+      let total=0;
+      $('#invoiceTableBody tr').each(function(){
+        const totalCell=$(this).find('td:nth-child(8) input');
+        const taxCell=$(this).find('td:nth-child(9) input');
+        const totTaxCell=$(this).find('td:nth-child(10) input');
+        if(!totalCell.length||!taxCell.length||!totTaxCell.length)return;
+        let val=parseFloat(totTaxCell.val())||0;
+        total+=val;
+      });
+      $('#globalTotal').text(total.toFixed(2));
+    }
+
+    // Initialiser Chart.js
+    const ctx=document.getElementById('paymentsChart').getContext('2d');
+    paymentsChart=new Chart(ctx,{
+      type:'pie',
+      data:{ 
+        labels:['En attente','Approuvé'],
+        datasets:[{data:[0,0], backgroundColor:['#f1c40f','#27ae60']}]
+      },
+      options:{
+        plugins:{ title:{ display:true, text:'Répartition par statut' } }
+      }
+    });
+    function updateChart(){
+      // Recompter les statuts
+      let pending=0; let approved=0;
+      $('#invoiceTableBody tr').each(function(){
+        const st=$(this).find('.status-select').val();
+        if(st==='pending') pending++;
+        else if(st==='approved') approved++;
+      });
+      paymentsChart.data.datasets[0].data=[pending, approved];
+      paymentsChart.update();
+    }
+
+    // Dark Mode
+    $('#darkModeToggleBtn').click(function(){
+      document.body.classList.toggle('dark-mode');
+    });
+  });
+  </script>
 </body>
 </html>

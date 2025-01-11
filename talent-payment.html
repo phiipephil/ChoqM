@@ -1,716 +1,779 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Talent - Système de Gestion des Paiements | CHOQ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .info-icon {
-            cursor: pointer;
-            color: #0d6efd;
-            margin-left: 5px;
-        }
-        .table-container {
-            overflow-x: auto;
-            min-height: 400px;
-        }
-        .status-paid {
-            background-color: #d4edda !important;
-        }
-        .status-unpaid {
-            background-color: #f8d7da !important;
-        }
-        .status-pending {
-            background-color: #fff3cd !important;
-        }
-        .service-details {
-            display: none;
-            background-color: #f8f9fa;
-            border-top: none;
-        }
-        .service-details td {
-            padding: 1rem;
-        }
-        .service-details table {
-            margin-bottom: 0;
-        }
-        .expand-button {
-            cursor: pointer;
-            color: #0d6efd;
-        }
-        .service-count-badge {
-            font-size: 0.8em;
-            vertical-align: super;
-            margin-left: 5px;
-            cursor: help;
-        }
-        .service-types-container {
-            position: relative;
-            display: inline-block;
-        }
-        .service-types-popup {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            min-width: 150px;
-        }
-        .service-types-container:hover .service-types-popup {
-            display: block;
-        }
-        .service-types-popup ul {
-            margin: 0;
-            padding: 0;
-        }
-        .service-types-popup li {
-            padding: 4px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .service-types-popup li:last-child {
-            border-bottom: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Espace Talent - Système de Gestion des Paiements | CHOQ</title>
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Chart.js (pour le graphique) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+  <style>
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --light-bg: #f8f9fa;
+    --border-radius: 8px;
+  }
+  body {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+  }
+  .container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 1rem;
+  }
+  .info-icon {
+    cursor: pointer;
+    color: var(--accent-color);
+    margin-left: 5px;
+    transition: color 0.3s ease;
+  }
+  .info-icon:hover {
+    color: var(--primary-color);
+  }
+  .table-container {
+    overflow-x: auto;
+    min-height: 400px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 1rem;
+    margin-top: 2rem;
+  }
+  .btn {
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+  .btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+  }
+  .btn-dark-mode {
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+  .table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border-bottom: none;
+    padding: 1rem;
+    position: sticky; 
+    top: 0;
+    z-index: 1; /* Pour que l’en-tête reste au-dessus lors du scroll */
+  }
+  /* Alternance de couleurs (zebra) */
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+  .table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.05);
+  }
+
+  .table tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+  }
+  .form-control, .form-select {
+    border-radius: var(--border-radius);
+    border: 1px solid #dee2e6;
+    padding: 0.5rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52,152,219,0.25);
+  }
+  .modal-content {
+    border-radius: var(--border-radius);
+    box-shadow: 0 3px 20px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  .modal-header .btn-close {
+    filter: brightness(0) invert(1);
+  }
+
+  .status-badge {
+    padding: 0.4em 0.7em;
+    border-radius: var(--border-radius);
+    color: #333;
+  }
+  .status-pending {
+    background-color: var(--warning-color);
+  }
+  .status-approved {
+    background-color: var(--success-color);
+    color: #fff;
+  }
+
+  /* Mode sombre */
+  body.dark-mode {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+  }
+  body.dark-mode .table-container {
+    background-color: #2b2b2b;
+  }
+  body.dark-mode .modal-content {
+    background-color: #2b2b2b;
+    color: #f0f0f0;
+  }
+  body.dark-mode .table thead th {
+    background-color: #444 !important;
+  }
+  body.dark-mode .info-icon {
+    color: #bbb;
+  }
+  body.dark-mode .btn-dark-mode {
+    color: #fff;
+    border-color: #aaa;
+  }
+  </style>
 </head>
 <body>
-    <div class="container-fluid py-4">
-        <h1 class="mb-4">Espace Talent - Gestion des Factures</h1>
-        
-        <!-- Sélecteur de type d'employé -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Type d'employé</h5>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="employeeType" id="programmer" value="programmeur" checked>
-                    <label class="form-check-label" for="programmer">Programmeur</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="employeeType" id="photographer" value="photographe">
-                    <label class="form-check-label" for="photographer">Photographe</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="employeeType" id="videographer" value="vidéaste">
-                    <label class="form-check-label" for="videographer">Vidéaste</label>
-                </div>
-            </div>
+  <div class="container-fluid py-4">
+    <h1>Espace Talent - Gestion des Factures</h1>
+
+    <!-- Sélecteur de type d'employé -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Type d'employé</h5>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="employeeType" id="programmer" value="programmeur" checked>
+          <label class="form-check-label" for="programmer">Programmeur</label>
         </div>
-
-        <nav class="mb-4">
-            <a href="index.html" class="btn btn-outline-primary">Retour à l'Administration</a>
-        </nav>
-
-        <!-- Options de génération -->
-        <div class="mb-4">
-            <div class="btn-group" role="group">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
-                    Générer une nouvelle facture
-                </button>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
-                    Déposer une facture Excel
-                </button>
-            </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="employeeType" id="photographer" value="photographe">
+          <label class="form-check-label" for="photographer">Photographe</label>
         </div>
-
-        <!-- Modal Dépôt Facture Excel -->
-        <div class="modal fade" id="uploadExcelModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Déposer une facture Excel</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="uploadExcelForm">
-                            <div class="mb-3">
-                                <label class="form-label">Sélectionner le fichier Excel</label>
-                                <input type="file" class="form-control" accept=".xls,.xlsx">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="uploadExcelForm" class="btn btn-primary">Déposer</button>
-                    </div>
-                </div>
-            </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="employeeType" id="videographer" value="vidéaste">
+          <label class="form-check-label" for="videographer">Vidéaste</label>
         </div>
-
-        <!-- Tableau principal -->
-        <div class="table-container">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Date <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Date de la prestation effectuée"></i></th>
-                        <th>Client <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Nom du client"></i></th>
-                        <th>Services <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Types de services rendus"></i></th>
-                        <th>Montant total <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Calcul automatique: Somme des services"></i></th>
-                        <th class="tax-column">Montant taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="TPS (5%) + TVQ (9.975%)"></i></th>
-                        <th class="tax-column">Total + Taxes <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="Montant total avec taxes"></i></th>
-                        <th>Statut <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" title="État du paiement"></i></th>
-                    </tr>
-                </thead>
-                <tbody id="invoiceTableBody">
-                    <!-- Les lignes seront ajoutées dynamiquement -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Modal Nouvelle Facture -->
-        <div class="modal fade" id="newInvoiceModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Générer une nouvelle facture</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="newInvoiceForm">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Date de prestation</label>
-                                    <input type="date" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Client</label>
-                                    <input type="text" class="form-control" placeholder="ex: CHOQ MÉDIA" required>
-                                </div>
-                            </div>
-
-                            <div id="servicesContainer">
-                                <div class="service-entry mb-3">
-                                    <div class="row mb-2">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Type de service</label>
-                                            <select class="form-select service-type" required>
-                                                <option value="">Sélectionner...</option>
-                                                <option>Heure standard</option>
-                                                <option>Heure de tournage</option>
-                                                <option>Heure de montage</option>
-                                                <option>Vidéo TikTok</option>
-                                                <option>Vidéo Short</option>
-                                                <option>Vidéo YouTube</option>
-                                                <option>Déplacement (Km)</option>
-                                                <option>Prime de repas</option>
-                                                <option>Prime d'hébergement</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Quantité</label>
-                                            <input type="number" class="form-control service-quantity" min="0" step="0.01" required>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Tarif unitaire</label>
-                                            <input type="number" class="form-control service-price" min="0" step="0.01" required>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button type="button" class="btn btn-danger form-control remove-service" style="display: none;">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
-                                <i class="bi bi-plus-circle"></i> Ajouter un service
-                            </button>
-
-                            <div class="mb-3">
-                                <label class="form-label">Description/Justification</label>
-                                <textarea class="form-control" rows="3" placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc."></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="taxCheck">
-                                    <label class="form-check-label" for="taxCheck">
-                                        Charger des taxes
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div id="taxFields" class="d-none">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro NEQ</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro TPS</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Numéro TVQ</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" form="newInvoiceForm" class="btn btn-primary" id="submitBtn">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                            <span class="btn-text">Générer</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    
-    <!-- Bootstrap JS + jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <!-- 1) PaymentManager -->
-    <script>
-    // ==============================
-    //          PaymentManager
-    // ==============================
-    window.PaymentManager = class PaymentManager {
-        constructor() {
-            this.payments = [];
-            this.loadFromStorage();
-        }
+    <!-- Boutons d'action -->
+    <div class="mb-3 d-flex flex-wrap align-items-center" style="gap:1rem;">
+      <div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
+          <i class="bi bi-plus-circle"></i> Nouvelle facture
+        </button>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
+          <i class="bi bi-upload"></i> Déposer une facture Excel
+        </button>
+      </div>
+      <!-- Bouton de mode sombre -->
+      <button class="btn btn-dark-mode" id="toggleDarkModeBtn">
+        <i class="bi bi-moon-stars"></i> Mode sombre
+      </button>
+      <!-- Champ de recherche (client) -->
+      <div class="ms-auto">
+        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un client..." style="min-width:200px;">
+      </div>
+    </div>
 
-        loadFromStorage() {
-            try {
-                const stored = localStorage.getItem('payments');
-                if (stored) {
-                    this.payments = JSON.parse(stored);
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des paiements:', error);
-                this.payments = [];
-            }
-        }
+    <!-- Tableau principal -->
+    <div class="table-container">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Date 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="Date de la prestation effectuée"></i>
+            </th>
+            <th>Client 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="Nom du client"></i>
+            </th>
+            <th>Services 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="Types de services rendus"></i>
+            </th>
+            <th>Montant total 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="Somme des (quantité × tarif)"></i>
+            </th>
+            <th class="tax-column">Montant taxes 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="TPS (5%) + TVQ (9.975%)"></i>
+            </th>
+            <th class="tax-column">Total + Taxes 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="Montant total avec taxes"></i>
+            </th>
+            <th>Statut 
+              <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                 title="État du paiement (en attente, payé, etc.)"></i>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody">
+          <!-- Lignes dynamiques -->
+        </tbody>
+      </table>
+    </div>
 
-        async loadPayments() {
-            return [...this.payments];
-        }
+    <!-- Résumé / total global -->
+    <div class="mt-3">
+      <h4>Total de vos factures : <span id="globalTotal">0.00</span> $</h4>
+    </div>
 
-        async savePayment(payment) {
-            try {
-                payment.id = Date.now().toString();
-                payment.createdAt = new Date().toISOString();
-                this.payments.push(payment);
-                localStorage.setItem('payments', JSON.stringify(this.payments));
-                return payment;
-            } catch (error) {
-                console.error('Erreur lors de la sauvegarde du paiement:', error);
-                throw error;
-            }
-        }
+    <!-- Graphique (répartition des statuts) -->
+    <div class="my-4">
+      <canvas id="paymentsChart" width="600" height="300"></canvas>
+    </div>
 
-        clearPayments() {
-            this.payments = [];
-            localStorage.removeItem('payments');
-        }
-    };
-    </script>
+    <!-- Modal Dépôt Facture Excel -->
+    <div class="modal fade" id="uploadExcelModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Déposer une facture Excel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="uploadExcelForm">
+              <div class="mb-3">
+                <label class="form-label">Sélectionner le fichier Excel</label>
+                <input type="file" class="form-control" accept=".xls,.xlsx">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" form="uploadExcelForm" class="btn btn-primary">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="btn-text">Déposer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- 2) ExcelReader simplifié -->
-    <script>
-    // ==============================
-    //          ExcelReader
-    // ==============================
-    class ExcelReader {
-        constructor() {
-            this.error = '';
-        }
+    <!-- Modal Nouvelle Facture -->
+    <div class="modal fade" id="newInvoiceModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Générer une nouvelle facture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="newInvoiceForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Date de prestation</label>
+                  <input type="date" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Client</label>
+                  <input type="text" class="form-control" placeholder="ex: CHOQ MÉDIA" required>
+                </div>
+              </div>
 
-        async readExcelFile(file) {
-            try {
-                // Lire le fichier en ArrayBuffer
-                const arrayBuffer = await file.arrayBuffer();
+              <div id="servicesContainer">
+                <div class="service-entry mb-3">
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <label class="form-label">Type de service</label>
+                      <select class="form-select service-type" required>
+                        <option value="">Sélectionner...</option>
+                        <option>Heure standard</option>
+                        <option>Heure de tournage</option>
+                        <option>Heure de montage</option>
+                        <option>Vidéo TikTok</option>
+                        <option>Vidéo Short</option>
+                        <option>Vidéo YouTube</option>
+                        <option>Déplacement (Km)</option>
+                        <option>Prime de repas</option>
+                        <option>Prime d'hébergement</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Quantité</label>
+                      <input type="number" class="form-control service-quantity" min="0" step="0.01" required>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Tarif unitaire</label>
+                      <input type="number" class="form-control service-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="col-md-2">
+                      <label class="form-label">&nbsp;</label>
+                      <button type="button" class="btn btn-danger form-control remove-service" style="display:none;">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary mb-3" id="addServiceBtn">
+                <i class="bi bi-plus-circle"></i> Ajouter un service
+              </button>
 
-                // Parser le classeur (workbook) avec SheetJS
-                const workbook = XLSX.read(arrayBuffer, {
-                    cellStyles: true,
-                    cellFormulas: true,
-                    cellDates: true,
-                    cellNF: true,
-                    sheetStubs: true
-                });
+              <div class="mb-3">
+                <label class="form-label">Description / Justification</label>
+                <textarea class="form-control" rows="3"
+                  placeholder="ex: heures de tournage: 12h à 15h, titres des vidéos produites, etc."></textarea>
+              </div>
 
-                // Objet qui contiendra le contenu de toutes les feuilles
-                const allSheetsData = {};
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="taxCheck">
+                  <label class="form-check-label" for="taxCheck">
+                    Charger des taxes
+                  </label>
+                </div>
+              </div>
+              <div id="taxFields" class="d-none">
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro NEQ</label>
+                    <input type="text" class="form-control">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro TPS</label>
+                    <input type="text" class="form-control">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Numéro TVQ</label>
+                    <input type="text" class="form-control">
+                  </div>
+                </div>
+              </div>
 
-                // Parcourir toutes les feuilles du classeur
-                workbook.SheetNames.forEach(sheetName => {
-                    const worksheet = workbook.Sheets[sheetName];
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" form="newInvoiceForm" class="btn btn-primary" id="submitInvoiceBtn">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="btn-text">Générer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 
-                    // Convertir la feuille en tableau 2D
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-                        header: 1,
-                        raw: false,
-                        blankrows: false,
-                        defval: ''
-                    });
+  <!-- Bootstrap JS + jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                    // Stocker les données dans allSheetsData
-                    allSheetsData[sheetName] = jsonData;
-                });
+  <!-- SheetJS pour lecture Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-                // Retourner toutes les feuilles sous forme d'objet
-                return allSheetsData;
-
-            } catch (err) {
-                this.error = `Erreur lors du traitement du fichier : ${err.message}`;
-                throw err;
-            }
-        }
+  <!-- ==============================
+       1) PaymentManager 
+  ============================== -->
+  <script>
+  class PaymentManager {
+    constructor(){
+      this.payments = [];
+      this.loadFromStorage();
     }
-    </script>
-
-    <!-- 3) parseRemunerationSheet -->
-    <script>
-    // ==============================
-    //  parseRemunerationSheet
-    // ==============================
-    function parseRemunerationSheet(allSheetsData) {
-        if (!allSheetsData['Rémunération']) {
-            console.warn('Feuille "Rémunération" introuvable dans le fichier Excel.');
-            return [];
-        }
-
-        const rows = allSheetsData['Rémunération'];
-        const payments = [];
-
-        // On suppose que les vraies données commencent vers la ligne 7
-        // (d’après ton output). Ajuste si besoin.
-        for (let i = 7; i < rows.length; i++) {
-            const row = rows[i];
-            if (!row || row.length < 9) {
-                continue;
-            }
-
-            // Indices possibles : 
-            // row[1] => date
-            // row[4] => quantité
-            // row[5] => type
-            // row[6] => description
-            // row[7] => client
-            // row[8] => tarif unitaire
-            const dateStr = (row[1] || '').toString().trim();
-            const quantityStr = (row[4] || '').toString().trim();
-            const type = (row[5] || '').toString().trim();
-            const description = (row[6] || '').toString().trim();
-            const client = (row[7] || '').toString().trim();
-            const unitPriceStr = (row[8] || '').toString().trim();
-
-            if (!dateStr || !type || !client) {
-                // Ligne incomplète
-                continue;
-            }
-
-            const quantity = parseFloat(quantityStr.replace('$',''));
-            const unitPrice = parseFloat(unitPriceStr.replace('$',''));
-            if (isNaN(quantity) || isNaN(unitPrice) || quantity <= 0 || unitPrice <= 0) {
-                // Ligne non valide
-                continue;
-            }
-
-            // Construire un objet payment
-            const payment = {
-                date: dateStr,
-                client: client,
-                employeeType: '',
-                services: [
-                    {
-                        type: type,
-                        quantity: quantity,
-                        unitPrice: unitPrice,
-                        description: description
-                    }
-                ],
-                hasTaxes: false,
-                status: "pending"
-            };
-
-            const total = quantity * unitPrice;
-            payment.total = parseFloat(total.toFixed(2));
-            payment.taxAmount = 0; 
-            payment.totalWithTaxes = payment.total;
-
-            payments.push(payment);
-        }
-
-        return payments;
+    loadFromStorage(){
+      try {
+        const stored = localStorage.getItem('talentPayments');
+        if(stored) this.payments = JSON.parse(stored);
+      } catch(e){
+        console.error('Erreur chargement paiements:', e);
+        this.payments = [];
+      }
     }
-    </script>
+    async loadPayments(){ return [...this.payments]; }
+    async savePayment(payment){
+      try {
+        payment.id = Date.now().toString();
+        payment.createdAt = new Date().toISOString();
+        this.payments.push(payment);
+        localStorage.setItem('talentPayments', JSON.stringify(this.payments));
+        return payment;
+      } catch(e){
+        console.error('Erreur sauvegarde paiement:', e);
+        throw e;
+      }
+    }
+  }
+  </script>
 
-    <!-- 4) Script principal (Logique de la page) -->
-    <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        // Instancier PaymentManager & ExcelReader
-        const paymentManager = new PaymentManager();
-        const excelReader = new ExcelReader();
-
-        // Charger dans la table ce qui est déjà stocké en localStorage
-        const existingPayments = await paymentManager.loadPayments();
-        existingPayments.forEach(payment => {
-            addInvoiceRow(payment);
+  <!-- ==============================
+       2) ExcelReader 
+  ============================== -->
+  <script>
+  class ExcelReader {
+    constructor(){ this.error=''; }
+    async readExcelFile(file){
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer,{
+          cellStyles:true, cellFormulas:true, cellDates:true, cellNF:true, sheetStubs:true
         });
-
-        // Activation des tooltips Bootstrap
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-        // Gestion de l'affichage des champs de taxes
-        $('#taxCheck').change(function() {
-            $('#taxFields').toggleClass('d-none', !this.checked);
-            $('.tax-column').toggleClass('d-none', !this.checked);
+        const allSheetsData={};
+        workbook.SheetNames.forEach(sheetName=>{
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet,{
+            header:1, raw:false, blankrows:false, defval:''
+          });
+          allSheetsData[sheetName]=jsonData;
         });
+        return allSheetsData;
+      } catch(err){
+        this.error='Erreur traitement fichier: '+err.message;
+        throw err;
+      }
+    }
+  }
+  </script>
 
-        // Calcul automatique des montants (exemple simple)
-        function calculateAmounts() {
-            let total = 0;
-            
-            $('.service-entry').each(function() {
-                const quantity = parseFloat($(this).find('.service-quantity').val()) || 0;
-                const unitPrice = parseFloat($(this).find('.service-price').val()) || 0;
-                total += quantity * unitPrice;
-            });
-            
-            if ($('#taxCheck').is(':checked')) {
-                const taxes = total * 0.14975; // TPS + TVQ ~ 14.975%
-                const totalWithTaxes = total + taxes;
-                return {
-                    subtotal: total.toFixed(2),
-                    taxes: taxes.toFixed(2),
-                    total: totalWithTaxes.toFixed(2)
-                };
-            }
-            
-            return {
-                subtotal: total.toFixed(2),
-                taxes: '0.00',
-                total: total.toFixed(2)
-            };
-        }
+  <!-- ==============================
+       3) parseRemunerationSheet 
+  ============================== -->
+  <script>
+  function parseRemunerationSheet(allSheetsData){
+    if(!allSheetsData['Rémunération']){
+      console.warn('Feuille "Rémunération" introuvable.');
+      return [];
+    }
+    const rows = allSheetsData['Rémunération'];
+    const payments = [];
+    for(let i=7;i<rows.length;i++){
+      const row=rows[i];
+      if(!row||row.length<9) continue;
+      const dateStr=(row[1]||'').toString().trim();
+      const quantityStr=(row[4]||'').toString().trim();
+      const type=(row[5]||'').toString().trim();
+      const description=(row[6]||'').toString().trim();
+      const client=(row[7]||'').toString().trim();
+      const unitPriceStr=(row[8]||'').toString().trim();
+      if(!dateStr||!type||!client) continue;
+      const quantity=parseFloat(quantityStr.replace('$',''));
+      const unitPrice=parseFloat(unitPriceStr.replace('$',''));
+      if(isNaN(quantity)||isNaN(unitPrice)||quantity<=0||unitPrice<=0) continue;
 
-        // Gestion des services multiples
-        $('#addServiceBtn').click(function(e) {
-            e.preventDefault();
-            const newService = $('.service-entry:first').clone();
-            newService.find('input').val('');
-            newService.find('select').val('');
-            newService.find('.remove-service').show();
-            $('#servicesContainer').append(newService);
-        });
+      const payment={
+        date: dateStr,
+        client: client,
+        employeeType:'', 
+        services:[{
+          type:type, quantity:quantity, unitPrice:unitPrice, description: description
+        }],
+        hasTaxes:false,
+        status:'pending'
+      };
+      const total=quantity*unitPrice;
+      payment.total=parseFloat(total.toFixed(2));
+      payment.taxAmount=0;
+      payment.totalWithTaxes=payment.total;
+      payments.push(payment);
+    }
+    return payments;
+  }
+  </script>
 
-        $(document).on('click', '.remove-service', function() {
-            if ($('.service-entry').length > 1) {
-                $(this).closest('.service-entry').remove();
-            }
-        });
+  <!-- ==============================
+       4) Script principal
+  ============================== -->
+  <script>
+  let paymentManager, excelReader, paymentsChart;
 
-        $(document).on('input', '.service-quantity, .service-price', calculateAmounts);
+  document.addEventListener('DOMContentLoaded',()=>{
+    paymentManager = new PaymentManager();
+    excelReader = new ExcelReader();
 
-        // Gérer la soumission du formulaire de nouvelle facture (manuel)
-        $('#newInvoiceForm').on('submit', async function(e) {
-            e.preventDefault();
+    // Tooltips
+    const tooltipList=[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipList.map(el=>new bootstrap.Tooltip(el));
 
-            // Afficher un spinner
-            const submitBtn = $('#submitBtn');
-            submitBtn.prop('disabled', true);
-            submitBtn.find('.spinner-border').removeClass('d-none');
-            submitBtn.find('.btn-text').text('Génération en cours...');
+    // Charger et afficher les paiements existants
+    (async()=>{
+      const existing = await paymentManager.loadPayments();
+      existing.forEach(p => addInvoiceRow(p));
+      updateGlobalTotal();
+      updateChart();
+    })();
 
-            try {
-                // Récupérer les infos du formulaire
-                const date = $(this).find('input[type="date"]').first().val();
-                const client = $(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val();
-                const employeeType = $('input[name="employeeType"]:checked').val();
-                const description = $(this).find('textarea').val();
-                const hasTaxes = $('#taxCheck').is(':checked');
-
-                // Construire le payment
-                const services = [];
-                $('.service-entry').each(function() {
-                    const service = {
-                        type: $(this).find('.service-type').val(),
-                        quantity: parseFloat($(this).find('.service-quantity').val()) || 0,
-                        unitPrice: parseFloat($(this).find('.service-price').val()) || 0,
-                        description
-                    };
-                    if (service.type && service.quantity > 0 && service.unitPrice > 0) {
-                        services.push(service);
-                    }
-                });
-
-                if (!date || !client || services.length === 0) {
-                    throw new Error('Informations incomplètes pour générer la facture');
-                }
-
-                // Calcul montants
-                const amounts = calculateAmounts();
-                const payment = {
-                    date,
-                    client,
-                    employeeType,
-                    services,
-                    hasTaxes,
-                    status: "pending",
-                    total: parseFloat(amounts.subtotal),
-                    taxAmount: parseFloat(amounts.taxes),
-                    totalWithTaxes: parseFloat(amounts.total)
-                };
-
-                if (payment.hasTaxes) {
-                    payment.taxInfo = {
-                        neq: $('#taxFields input').eq(0).val(),
-                        tps: $('#taxFields input').eq(1).val(),
-                        tvq: $('#taxFields input').eq(2).val()
-                    };
-                }
-
-                // Sauvegarder et afficher
-                const savedPayment = await paymentManager.savePayment(payment);
-                addInvoiceRow(savedPayment);
-
-                // Fermer la modal et reset
-                $('#newInvoiceModal').modal('hide');
-                this.reset();
-                // Remettre l'affichage des champs taxes à 0
-                $('#taxFields').addClass('d-none');
-                $('.tax-column').addClass('d-none');
-
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue lors de la génération de la facture: ' + error.message);
-            } finally {
-                // Réinitialiser le bouton
-                submitBtn.prop('disabled', false);
-                submitBtn.find('.spinner-border').addClass('d-none');
-                submitBtn.find('.btn-text').text('Générer');
-            }
-        });
-
-        // Gérer le formulaire d’upload Excel
-        $('#uploadExcelForm').on('submit', async function(e) {
-            e.preventDefault();
-            const file = $(this).find('input[type="file"]').prop('files')[0];
-            if (!file) {
-                alert('Veuillez sélectionner un fichier Excel');
-                return;
-            }
-
-            // Affichage d'un petit indicateur de chargement
-            const submitBtn = $(this).find('button[type="submit"]');
-            const originalText = submitBtn.text();
-            submitBtn.prop('disabled', true);
-            submitBtn.html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...'
-            );
-
-            try {
-                // Lecture du fichier Excel (toutes les feuilles)
-                const allSheetsData = await excelReader.readExcelFile(file);
-
-                if (!allSheetsData || Object.keys(allSheetsData).length === 0) {
-                    throw new Error('Aucune donnée valide n\'a été trouvée dans le fichier');
-                }
-
-                // Parser la feuille "Rémunération"
-                const parsedPayments = parseRemunerationSheet(allSheetsData);
-
-                if (parsedPayments.length === 0) {
-                    alert('Aucune ligne valide trouvée dans la feuille "Rémunération".');
-                } else {
-                    // Sauvegarder + afficher chaque payment
-                    for (const payment of parsedPayments) {
-                        const savedPayment = await paymentManager.savePayment(payment);
-                        addInvoiceRow(savedPayment);
-                    }
-                    alert(`${parsedPayments.length} facture(s) importée(s) avec succès !`);
-                }
-
-                // Fermer le modal et réinitialiser le formulaire
-                $('#uploadExcelModal').modal('hide');
-                this.reset();
-
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue lors du traitement du fichier Excel: ' + error.message);
-            } finally {
-                // Réinitialiser le bouton
-                submitBtn.prop('disabled', false);
-                submitBtn.text(originalText);
-            }
-        });
-
-        // Fonction pour ajouter une ligne au tableau
-        function addInvoiceRow(data) {
-            const formatValue = (value, defaultValue = '-') => {
-                return value !== null && value !== undefined ? value : defaultValue;
-            };
-
-            const row = `
-                <tr id="payment-${data.id}" class="payment-row">
-                    <td>${formatValue(data.date)}</td>
-                    <td>${formatValue(data.client)}</td>
-                    <td>
-                        <div class="service-types-container">
-                            <span class="service-type-display">
-                                ${
-                                    data.services && data.services.length > 0
-                                        ? data.services[0].type
-                                        : '-'
-                                }
-                                ${
-                                    data.services && data.services.length > 1
-                                        ? `<span class="badge bg-secondary service-count-badge">+${data.services.length - 1}</span>`
-                                        : ''
-                                }
-                            </span>
-                            <!-- Petit popup pour voir tous les services, si besoin -->
-                            ${
-                                data.services && data.services.length > 1
-                                ? `
-                                    <div class="service-types-popup">
-                                        <ul class="list-unstyled mb-0">
-                                            ${
-                                                data.services.map(s => `
-                                                    <li>
-                                                        ${s.type}
-                                                        <small class="text-muted">(${s.quantity} × ${s.unitPrice}$ = ${(s.quantity * s.unitPrice).toFixed(2)}$)</small>
-                                                    </li>
-                                                `).join('')
-                                            }
-                                        </ul>
-                                    </div>
-                                  `
-                                : ''
-                            }
-                        </div>
-                    </td>
-                    <td>${formatValue(data.total, '0.00')}</td>
-                    <td>${data.hasTaxes ? formatValue(data.taxAmount, '0.00') : 'Non-Inclus'}</td>
-                    <td>${data.hasTaxes ? formatValue(data.totalWithTaxes, '0.00') : formatValue(data.total, '0.00')}</td>
-                    <td>
-                        <span class="badge bg-warning">${data.status}</span>
-                    </td>
-                </tr>
-            `;
-            $('#invoiceTableBody').append(row);
-
-            // Réinitialiser les tooltips pour les nouveaux éléments
-            $('[data-bs-toggle="tooltip"]').tooltip();
-        }
+    // Mode sombre
+    const darkBtn=document.getElementById('toggleDarkModeBtn');
+    darkBtn.addEventListener('click',()=>{
+      document.body.classList.toggle('dark-mode');
     });
-    </script>
+
+    // Gérer la recherche (client)
+    $('#searchInput').on('input', function(){
+      const val=this.value.toLowerCase();
+      $('#invoiceTableBody tr').each(function(){
+        const clientCell=$(this).find('td:nth-child(2)');
+        if(!clientCell.length) return;
+        const txt=clientCell.text().toLowerCase();
+        $(this).toggle(txt.includes(val));
+      });
+    });
+
+    // Afficher/masquer champs de taxes
+    $('#taxCheck').change(function(){
+      $('#taxFields').toggleClass('d-none', !this.checked);
+      $('.tax-column').toggleClass('d-none', !this.checked);
+    });
+
+    // Gérer l’ajout de plusieurs services
+    $('#addServiceBtn').click(function(){
+      const newService=$('.service-entry:first').clone();
+      newService.find('input').val('');
+      newService.find('select').val('');
+      newService.find('.remove-service').show();
+      $('#servicesContainer').append(newService);
+    });
+    $(document).on('click','.remove-service',function(){
+      if($('.service-entry').length>1){
+        $(this).closest('.service-entry').remove();
+      }
+    });
+
+    // Calcul des montants dans la modal
+    function calculateModalAmounts(){
+      let total=0;
+      $('.service-entry').each(function(){
+        const q=parseFloat($(this).find('.service-quantity').val())||0;
+        const u=parseFloat($(this).find('.service-price').val())||0;
+        total+=(q*u);
+      });
+      if($('#taxCheck').is(':checked')){
+        const taxes= total*0.14975; // TPS + TVQ
+        return {
+          subtotal: total.toFixed(2),
+          tax: taxes.toFixed(2),
+          total: (total+taxes).toFixed(2)
+        };
+      }
+      return {
+        subtotal: total.toFixed(2),
+        tax:'0.00',
+        total: total.toFixed(2)
+      };
+    }
+    $(document).on('input','.service-quantity,.service-price',calculateModalAmounts);
+
+    // Modal "Nouvelle facture"
+    $('#newInvoiceForm').on('submit', async function(e){
+      e.preventDefault();
+      const submitBtn=$('#submitInvoiceBtn');
+      submitBtn.prop('disabled',true);
+      submitBtn.find('.spinner-border').removeClass('d-none');
+      submitBtn.find('.btn-text').text('Génération...');
+      try {
+        const date=$(this).find('input[type="date"]').val();
+        const client=$(this).find('input[placeholder="ex: CHOQ MÉDIA"]').val();
+        const employeeType=$('input[name="employeeType"]:checked').val();
+        const description=$(this).find('textarea').val()||'';
+        const hasTaxes=$('#taxCheck').is(':checked');
+
+        const services=[];
+        $('.service-entry').each(function(){
+          const stype=$(this).find('.service-type').val();
+          const qty=parseFloat($(this).find('.service-quantity').val())||0;
+          const price=parseFloat($(this).find('.service-price').val())||0;
+          if(stype && qty>0 && price>0){
+            services.push({type:stype, quantity:qty, unitPrice:price, description});
+          }
+        });
+        if(!date||!client||services.length===0) {
+          throw new Error('Informations incomplètes pour générer la facture');
+        }
+        const amounts=calculateModalAmounts();
+        const payment={
+          date, client, employeeType, services, hasTaxes,
+          status:'pending',
+          total:parseFloat(amounts.subtotal),
+          taxAmount:parseFloat(amounts.tax),
+          totalWithTaxes:parseFloat(amounts.total)
+        };
+        if(hasTaxes){
+          payment.taxInfo={
+            neq:$('#taxFields input').eq(0).val(),
+            tps:$('#taxFields input').eq(1).val(),
+            tvq:$('#taxFields input').eq(2).val()
+          };
+        }
+        const saved=await paymentManager.savePayment(payment);
+        addInvoiceRow(saved);
+
+        // Fermer la modal et reset
+        $('#newInvoiceModal').modal('hide');
+        this.reset();
+        $('#taxFields').addClass('d-none');
+        $('.tax-column').addClass('d-none');
+        updateGlobalTotal();
+        updateChart();
+      } catch(err){
+        alert('Erreur: '+err.message);
+      } finally {
+        submitBtn.prop('disabled',false);
+        submitBtn.find('.spinner-border').addClass('d-none');
+        submitBtn.find('.btn-text').text('Générer');
+      }
+    });
+
+    // Modal "Déposer Excel"
+    $('#uploadExcelForm').on('submit',async function(e){
+      e.preventDefault();
+      const file=$(this).find('input[type="file"]').prop('files')[0];
+      if(!file){ alert('Veuillez sélectionner un fichier Excel'); return; }
+      const submitBtn=$(this).find('button[type="submit"]');
+      const originalText=submitBtn.find('.btn-text').text();
+      submitBtn.prop('disabled',true);
+      submitBtn.find('.spinner-border').removeClass('d-none');
+      submitBtn.find('.btn-text').text('Traitement...');
+      try {
+        const allSheets=await excelReader.readExcelFile(file);
+        if(!allSheets||Object.keys(allSheets).length===0){
+          throw new Error('Aucune donnée trouvée dans le fichier');
+        }
+        const parsedPayments=parseRemunerationSheet(allSheets);
+        if(parsedPayments.length===0){
+          alert('Aucune ligne valide dans la feuille "Rémunération".');
+        } else {
+          for(const p of parsedPayments){
+            const saved=await paymentManager.savePayment(p);
+            addInvoiceRow(saved);
+          }
+          alert(parsedPayments.length+' facture(s) importée(s) avec succès!');
+          updateGlobalTotal();
+          updateChart();
+        }
+        $('#uploadExcelModal').modal('hide');
+        this.reset();
+      } catch(err){
+        alert('Erreur: '+err.message);
+      } finally {
+        submitBtn.prop('disabled',false);
+        submitBtn.find('.spinner-border').addClass('d-none');
+        submitBtn.find('.btn-text').text(originalText);
+      }
+    });
+
+    // Ajouter une ligne au tableau
+    function addInvoiceRow(data){
+      const formatVal=(val,df='-')=>val!==undefined && val!==null? val: df;
+      // On gère le 1er service affiché + popup s’il y en a plusieurs
+      const row=`
+      <tr>
+        <td>${formatVal(data.date)}</td>
+        <td>${formatVal(data.client)}</td>
+        <td>
+          <div class="position-relative">
+            <span>
+              ${data.services[0]?.type||'-'}
+              ${
+                data.services.length>1
+                ? `<span class="badge bg-secondary ms-1">+${data.services.length-1}</span>`
+                :''
+              }
+            </span>
+            ${
+              data.services.length>1
+              ? `<div class="position-absolute bg-white border p-2 mt-1" 
+                   style="display:none; z-index:999; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                   <ul class="list-unstyled mb-0">
+                     ${data.services.map(s=>`
+                       <li>${s.type} 
+                         <small class="text-muted">
+                           (${s.quantity} × ${s.unitPrice} $ = ${(s.quantity*s.unitPrice).toFixed(2)} $)
+                         </small>
+                       </li>`).join('')}
+                   </ul>
+                 </div>`
+              :''
+            }
+          </div>
+        </td>
+        <td>${formatVal(data.total,'0.00')}</td>
+        <td>${data.hasTaxes ? formatVal(data.taxAmount,'0.00'): 'Non-inclus'}</td>
+        <td>${data.hasTaxes ? formatVal(data.totalWithTaxes,'0.00'): formatVal(data.total,'0.00')}</td>
+        <td>
+          ${
+            data.status==='approved'
+            ? `<span class="status-badge status-approved">Approuvé</span>`
+            : `<span class="status-badge status-pending">En attente</span>`
+          }
+        </td>
+      </tr>`;
+      $('#invoiceTableBody').append(row);
+      $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    // Calculer le total global
+    function updateGlobalTotal(){
+      let total=0;
+      $('#invoiceTableBody tr').each(function(){
+        const totCell=$(this).find('td').eq(5); // 6e colonne = total+taxes
+        if(!totCell.length)return;
+        const val=parseFloat(totCell.text())||0;
+        total+=val;
+      });
+      $('#globalTotal').text(total.toFixed(2));
+    }
+
+    // Chart.js
+    const ctx=document.getElementById('paymentsChart').getContext('2d');
+    paymentsChart=new Chart(ctx,{
+      type:'pie',
+      data:{
+        labels:['En attente','Approuvé'],
+        datasets:[{
+          data:[0,0],
+          backgroundColor:['#f1c40f','#27ae60']
+        }]
+      },
+      options:{
+        plugins:{title:{display:true,text:'Répartition des factures par statut'}}
+      }
+    });
+    function updateChart(){
+      let pending=0, approved=0;
+      $('#invoiceTableBody tr').each(function(){
+        const statusCell=$(this).find('td').eq(6).text().toLowerCase();
+        if(statusCell.includes('attente')) pending++;
+        else if(statusCell.includes('approuvé')) approved++;
+      });
+      paymentsChart.data.datasets[0].data=[pending, approved];
+      paymentsChart.update();
+    }
+    // Sur tout changement (pour l’instant, ici pas d’édition en direct, 
+    // mais si vous en ajoutiez, vous pourriez rappeler updateGlobalTotal() + updateChart() après)
+  });
+  </script>
 </body>
 </html>

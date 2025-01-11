@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Retiré : chart.js et dark mode -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- React -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.8/babel.min.js"></script>
-    <!-- Include Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         * {
-            
             box-sizing: border-box;
         }
-
         body {
             margin: 0;
             padding: clamp(10px, 2vw, 20px);
@@ -25,7 +22,6 @@
             background: #fff;
             min-height: 100vh;
         }
-
         .main-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -35,14 +31,12 @@
             margin: 0 auto;
             width: 100%;
         }
-
         .top-section {
             background: white;
             border-radius: 12px;
             padding: clamp(10px, 2vw, 20px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
         .middle-section, .bottom-section {
             display: grid;
             grid-template-columns: 1fr;
@@ -50,7 +44,6 @@
             max-height: none;
             overflow-y: visible;
         }
-
         @media (min-width: 768px) {
             .middle-section, .bottom-section {
                 grid-template-columns: 1fr 1fr;
@@ -58,7 +51,6 @@
                 overflow-y: auto;
             }
         }
-
         .section {
             background: white;
             border-radius: 12px;
@@ -67,7 +59,6 @@
             font-size: clamp(0.85em, 1vw, 0.95em);
             width: 100%;
         }
-
         .title {
             font-size: clamp(16px, 2vw, 20px);
             color: #1a237e;
@@ -77,18 +68,15 @@
             align-items: center;
             flex-wrap: wrap;
         }
-
         .title i, .title svg {
             margin-right: 10px;
         }
-
         .info-card { 
             background: none;
             box-shadow: none;
             padding: 0;
             width: 100%;
         }
-
         .info-row {
             display: flex;
             margin: 10px 0;
@@ -96,7 +84,6 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-
         .label {
             font-weight: bold;
             min-width: 150px;
@@ -104,18 +91,15 @@
             display: flex;
             align-items: center;
         }
-
         .label i {
             margin-right: 5px;
             width: 16px;
         }
-
         .value {
             color: #666;
             flex: 1;
             word-break: break-word;
         }
-
         .edit-btn, .save-btn, .cancel-btn {
             padding: 8px 16px;
             border-radius: 6px;
@@ -127,26 +111,21 @@
             align-items: center;
             white-space: nowrap;
         }
-
         .edit-btn i, .save-btn i, .cancel-btn i {
             margin-right: 5px;
         }
-
         .edit-btn {
             background: #1a237e;
             color: white;
         }
-
         .save-btn {
             background: #1a237e; 
             color: white;
         }
-
         .cancel-btn {
             background: #f44336;
             color: white;
         }
-
         .edit-mode input {
             width: 100%;
             padding: 8px;
@@ -154,29 +133,24 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
         .message {
             padding: 10px;
             margin: 10px 0;
             border-radius: 4px;
             width: 100%;
         }
-
         .success {
             background: #e0e0e0; 
             color: #333;
         }
-
         .error {
             background: #ffcdd2;
             color: #c62828;
         }
-
         .info {
             background-color: #bbdefb;
             color: #1565c0;
         }
-
         /* Documents */
         .input-field {
             width: 100%;
@@ -185,62 +159,51 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
         .form-layout {
             display: flex;
             flex-direction: column;
             gap: 20px;
             margin-top: 20px;
         }
-
         @media (min-width: 768px) {
             .form-layout {
                 flex-direction: row;
             }
         }
-
         .left-section {
             flex: 1;
         }
-
         .right-section {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             width: 100%;
         }
-
         @media (min-width: 768px) {
             .right-section {
                 width: 200px;
             }
         }
-
         .radio-group {
             margin-bottom: 15px;
         }
-
         .radio-item {
             margin-bottom: 10px;
             display: flex;
             align-items: center;
         }
-
         .radio-item input {
             margin-right: 10px;
         }
-
         .radio-item label {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .radio-item label i {
             margin-right: 5px;
             width: 16px;
         }
-
         .upload-btn {
             background: #1a237e;
             color: white;
@@ -255,15 +218,12 @@
             justify-content: center;
             height: fit-content;
         }
-
         .upload-btn i {
             margin-right: 10px;
         }
-
         .upload-btn:hover {
             background: #3949ab;
         }
-
         .error-text {
             color: #c62828;
             margin-top: -10px;
@@ -271,11 +231,9 @@
             display: none;
             font-size: 14px;
         }
-
         .field-error {
             border-color: #c62828;
         }
-
         /* Contrats */
         .contract-status {
             display: flex;
@@ -284,11 +242,9 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-
         .contract-status svg {
             margin-right: 5px;
         }
-
         .status-indicator {
             width: 12px;
             height: 12px;
@@ -296,40 +252,33 @@
             margin-right: 10px;
             flex-shrink: 0;
         }
-
         .active {
             background-color: #1a237e; 
         }
-
         .inactive {
             background-color: #f44336;
         }
-
         .contract-info {
             background: #f8f9fa;
             border-radius: 8px;
             padding: clamp(10px, 2vw, 20px);
             margin-bottom: 20px;
         }
-
         .info-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
             margin-bottom: 15px;
         }
-
         @media (min-width: 480px) {
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
         .info-item {
             display: flex;
             flex-direction: column;
         }
-
         .info-label {
             font-size: 0.9em;
             color: #666;
@@ -339,17 +288,14 @@
             flex-wrap: wrap;
             gap: 5px;
         }
-
         .info-label svg {
             margin-right: 5px;
         }
-
         .info-value {
             font-weight: bold;
             color: #333;
             word-break: break-word;
         }
-
         .time-remaining {
             background: #e3f2fd;
             padding: 10px;
@@ -362,18 +308,15 @@
             flex-wrap: wrap;
             gap: 5px;
         }
-
         .time-remaining svg {
             margin-right: 5px;
         }
-
         .weekly-stats {
             background: #fff3e0;
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
         }
-
         .stats-title {
             font-weight: bold;
             margin-bottom: 10px;
@@ -383,11 +326,9 @@
             flex-wrap: wrap;
             gap: 5px;
         }
-
         .stats-title svg {
             margin-right: 5px;
         }
-
         .contract-pdf-link {
             display: inline-flex;
             align-items: center;
@@ -400,24 +341,20 @@
             font-size: clamp(12px, 1.2vw, 14px);
             gap: 5px;
         }
-
         .contract-pdf-link:hover {
             background: #3949ab;
         }
-
         /* Paiements */
         .payment-list {
             max-height: none;
             overflow-y: visible;
         }
-
         @media (min-width: 768px) {
             .payment-list {
                 max-height: 400px;
                 overflow-y: auto;
             }
         }
-
         .payment-item {
             background: #f8f9fa;
             border-radius: 8px;
@@ -427,43 +364,35 @@
             grid-template-columns: 1fr;
             gap: 10px;
         }
-
         @media (min-width: 480px) {
             .payment-item {
                 grid-template-columns: 1fr 1fr;
             }
         }
-
         .payment-info {
             display: grid;
             gap: 5px;
         }
-
         .payment-info div {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 5px;
         }
-
         .payment-info svg {
             margin-right: 5px;
         }
-
         .payment-date {
             font-weight: bold;
             color: #1a237e;
         }
-
         .payment-amount {
             font-size: clamp(1em, 1.2vw, 1.2em);
             color: #2e7d32; 
         }
-
         .payment-hours {
             color: #666;
         }
-
         .proof-btn {
             background: #1a237e; 
             color: white;
@@ -478,20 +407,16 @@
             width: fit-content;
             margin-left: auto;
         }
-
         .proof-btn svg {
             margin-right: 5px;
         }
-
         .proof-btn:hover {
             background: #3949ab;
         }
-
         .no-proof {
             background: #9e9e9e;
             cursor: not-allowed;
         }
-
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -502,21 +427,17 @@
             gap: 5px;
             width: fit-content;
         }
-
         .status-badge svg {
             margin-right: 5px;
         }
-
         .status-paid {
             background: #e0e0e0; 
             color: #333;
         }
-
         .status-pending {
             background: #fff3e0;
             color: #f57c00;
         }
-
         .payments-summary {
             margin-bottom: 15px;
             background: #e3f2fd;
@@ -529,18 +450,15 @@
             flex-wrap: wrap;
             gap: 5px;
         }
-
         .payments-summary svg {
             margin-right: 5px;
         }
-
         /* Portail d'information générale */
         .general-info-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         .general-info-list li {
             margin: 10px 0;
             display: flex;
@@ -548,40 +466,33 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-
         .general-info-list li i {
             margin-right: 10px;
             color: #1a237e;
         }
-
         .general-info-link {
             color: #1a237e;
             text-decoration: none;
             font-weight: bold;
             word-break: break-word;
         }
-
         .general-info-link:hover {
             text-decoration: underline;
-        }
-
-        /* Responsive Canvas */
-        canvas {
-            max-width: 100% !important;
-            height: auto !important;
         }
     </style>
 </head>
 <body>
     <div class="main-container">
+        <!-- Bouton / Lien vers paiement -->
         <div class="text-center mb-4">
-            <a href="talent-payment.html" class="btn btn-primary">Accéder au système de paiement</a>
+            <a href="talent-payment.html" class="btn btn-primary" style="padding:12px 20px;border-radius:6px;">
+                Accéder au système de paiement
+            </a>
         </div>
 
-        
-
-        <!-- Informations Personnelles & Documents -->
+        <!-- Middle section (Informations Personnelles & Documents) -->
         <div class="middle-section">
+            <!-- Informations Personnelles -->
             <div class="section" id="personalInfoSection">
                 <div class="title">
                     <i class="fas fa-user"></i>
@@ -589,7 +500,8 @@
                 </div>
                 <div id="root"></div>
             </div>
-            
+
+            <!-- Documents -->
             <div class="section" id="documentsSection">
                 <div class="title">
                     <i class="fas fa-file-circle-plus"></i>
@@ -659,46 +571,52 @@
             </div>
         </div>
 
-        <!-- Contrats & Paiements -->
+        <!-- Bottom section (Contrats & Paiements) -->
         <div class="bottom-section">
+            <!-- Contrats -->
             <div class="section" id="contractsSection">
                 <div class="title">
                     <svg data-lucide="file-text"></svg>
                     Contrats
                 </div>
                 <div id="contractContent"></div>
-                <canvas id="contractChart" style="display:none; width:100%; max-height:300px;"></canvas>
             </div>
 
+            <!-- Paiements -->
             <div class="section" id="paymentsSection">
-                <div class="title">
-                    <svg data-lucide="credit-card"></svg>
-                    <a href="talent-payment.html" style="text-decoration: none; color: inherit;">
+                <div class="title" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>
+                        <svg data-lucide="credit-card"></svg>
                         Paiement
-                    </a>
+                    </span>
+                    <!-- Champ de recherche paiements -->
+                    <input type="text" id="searchPaymentsInput" class="input-field" 
+                           placeholder="Rechercher un paiement..." 
+                           style="max-width:220px;">
                 </div>
+
                 <div id="paymentsSummary" class="payments-summary" style="display:none;">
                     <svg data-lucide="dollar-sign"></svg>
                     Montant total payé : <span id="totalPaid"></span> $
                 </div>
                 <div class="payment-list" id="paymentList"></div>
-                <canvas id="paymentChart" style="display:none; width:100%; max-height:300px;"></canvas>
             </div>
         </div>
-    </div>
-<!-- Portail d'information générale -->
-<div class="section">
-    <div class="title">
-        <i class="fas fa-info-circle"></i>
-        Portail d'Information Générale
-    </div>
-    <ul class="general-info-list">
-        <li><i class="fas fa-book"></i> <a href="#" class="general-info-link">Politiques internes</a></li>
-        <li><i class="fas fa-balance-scale"></i> <a href="#" class="general-info-link">Règlements</a></li>
-        <li><i class="fas fa-user-graduate"></i> <a href="#" class="general-info-link">Guide de l'employé</a></li>
-        <li><i class="fas fa-address-book"></i> <a href="#" class="general-info-link">Contacts utiles - Direction CHOQ MÉDIA</a></li>
-    </ul>
-</div>
+
+        <!-- Portail d'information générale (Même style/largeur) -->
+        <div class="section">
+            <div class="title">
+                <i class="fas fa-info-circle"></i>
+                Portail d'Information Générale
+            </div>
+            <ul class="general-info-list">
+                <li><i class="fas fa-book"></i> <a href="#" class="general-info-link">Politiques internes</a></li>
+                <li><i class="fas fa-balance-scale"></i> <a href="#" class="general-info-link">Règlements</a></li>
+                <li><i class="fas fa-user-graduate"></i> <a href="#" class="general-info-link">Guide de l'employé</a></li>
+                <li><i class="fas fa-address-book"></i> <a href="#" class="general-info-link">Contacts utiles - Direction CHOQ MÉDIA</a></li>
+            </ul>
+        </div>
+    </div><!-- /.main-container -->
 
     <!-- Script React pour la section Informations Personnelles -->
     <script type="text/babel">
@@ -892,12 +810,11 @@
     </script>
 
     <script>
+        // ----- Gestion Documents -----
         const uploadBtn = document.getElementById('uploadBtn');
         const docNameInput = document.getElementById('docName');
         const fileInput = document.getElementById('fileInput');
         const messageDiv = document.getElementById('message');
-
-        let payments = [];
 
         function showDocumentsMessage(text, type) {
             messageDiv.textContent = text;
@@ -905,7 +822,6 @@
             messageDiv.style.display = 'block';
             setTimeout(() => messageDiv.style.display = 'none', 3000);
         }
-
         function resetDocumentForm() {
             docNameInput.value = '';
             fileInput.value = '';
@@ -913,7 +829,6 @@
             if (docTypeChecked) docTypeChecked.checked = false;
             resetDocumentErrors();
         }
-
         function resetDocumentErrors() {
             docNameInput.classList.remove('field-error');
             fileInput.classList.remove('field-error');
@@ -921,7 +836,6 @@
             document.getElementById('docTypeError').style.display = 'none';
             document.getElementById('fileError').style.display = 'none';
         }
-
         function validateDocumentForm() {
             let isValid = true;
             if (!docNameInput.value.trim()) {
@@ -938,7 +852,6 @@
             }
             return isValid;
         }
-
         function showFieldError(fieldName) {
             switch(fieldName) {
                 case 'docName':
@@ -954,350 +867,300 @@
                     break;
             }
         }
-
         function uploadFileToServer(file, docName, docType) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const fileData = e.target.result;
-
-window.parent.postMessage({
-    type: 'uploadFile',
-    fileData: fileData,
-    fileName: file.name,
-    docName: docName,
-    docType: docType,
-    mimeType: file.type
-}, '*');
-
-function handleUploadResponse(event) {
-    if (event.data.type === 'uploadResponse') {
-        if (event.data.success) {
-            resolve(event.data.response);
-        } else {
-            reject(event.data.error);
+                    window.parent.postMessage({
+                        type: 'uploadFile',
+                        fileData: fileData,
+                        fileName: file.name,
+                        docName: docName,
+                        docType: docType,
+                        mimeType: file.type
+                    }, '*');
+                    function handleUploadResponse(event) {
+                        if (event.data.type === 'uploadResponse') {
+                            if (event.data.success) {
+                                resolve(event.data.response);
+                            } else {
+                                reject(event.data.error);
+                            }
+                            window.removeEventListener('message', handleUploadResponse);
+                        }
+                    }
+                    window.addEventListener('message', handleUploadResponse);
+                };
+                reader.onerror = () => {
+                    console.error('Erreur de lecture du fichier');
+                    reject('Erreur de lecture du fichier');
+                };
+                reader.readAsDataURL(file);
+            });
         }
-        window.removeEventListener('message', handleUploadResponse);
-    }
-}
+        uploadBtn.onclick = function() {
+            resetDocumentErrors();
+            if (validateDocumentForm()) {
+                const file = fileInput.files[0];
+                const docName = docNameInput.value.trim();
+                const docType = document.querySelector('input[name="docType"]:checked').value;
+                showDocumentsMessage('Upload en cours...', 'info');
+                uploadFileToServer(file, docName, docType)
+                .then(response => {
+                    showDocumentsMessage('Document uploadé avec succès', 'success');
+                    resetDocumentForm();
+                    window.parent.postMessage({type:'getDocuments'}, '*');
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'upload:', error);
+                    showDocumentsMessage('Erreur lors de l\'upload du document', 'error');
+                });
+            }
+        };
+        function updateDocumentsList(documents) {
+            console.log('Documents mis à jour :', documents);
+            // Implémentez l'affichage des documents si besoin.
+        }
 
-window.addEventListener('message', handleUploadResponse);
-};
-reader.onerror = () => {
-console.error('Erreur de lecture du fichier');
-reject('Erreur de lecture du fichier');
-};
-reader.readAsDataURL(file);
-});
-}
+        // ----- Contrats -----
+        function formatDate(date) {
+            if(!date) return 'N/A';
+            return new Date(date).toLocaleDateString('fr-FR');
+        }
+        function calculateTimeRemaining(endDate) {
+            if(!endDate) return 'N/A';
+            const now=new Date();
+            const end=new Date(endDate);
+            const diffDays=Math.ceil((end-now)/(1000*60*60*24));
+            return diffDays>0?`${diffDays} jours`:'Contrat terminé';
+        }
+        function calculateDuration(startDate, endDate) {
+            if(!startDate||!endDate) return 'N/A';
+            const start=new Date(startDate);
+            const end=new Date(endDate);
+            const diffDays=Math.ceil((end-start)/(1000*60*60*24));
+            return `${diffDays} jours`;
+        }
+        function calculateWeeklySalary(contract, hourlyRate) {
+            if(!contract||!hourlyRate) return 'N/A';
+            return contract.NombreHeuresParSemaine * hourlyRate;
+        }
+        function renderContract(contract, hourlyRate) {
+            const container=document.getElementById('contractContent');
+            if(!contract) {
+                container.innerHTML=`
+                    <div style="text-align:center; padding:20px; color:#666;">
+                        <svg data-lucide="alert-circle"></svg>
+                        Vous n'avez pas de contrat actuellement.
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+            const timeRemaining=calculateTimeRemaining(contract.dateDeFin);
+            const isActive=new Date(contract.dateDeFin)>new Date();
+            container.innerHTML=`
+            <div id="contractInfo" style="position: relative;">
+                <div class="contract-status">
+                    <div class="status-indicator ${isActive?'active':'inactive'}"></div>
+                    <span>
+                        <svg data-lucide="${isActive?'check-circle':'x-circle'}"></svg>
+                        ${isActive?'Contrat actif':'Contrat terminé'}
+                    </span>
+                </div>
+                <div class="contract-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">
+                                <svg data-lucide="calendar"></svg>
+                                Date de début
+                            </span>
+                            <span class="info-value">${formatDate(contract.dateDeDebut)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <svg data-lucide="calendar"></svg>
+                                Date de fin
+                            </span>
+                            <span class="info-value">${formatDate(contract.dateDeFin)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <svg data-lucide="clock"></svg>
+                                Heures par semaine
+                            </span>
+                            <span class="info-value">${contract.NombreHeuresParSemaine}h</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <svg data-lucide="hourglass"></svg>
+                                Durée totale
+                            </span>
+                            <span class="info-value">${calculateDuration(contract.dateDeDebut, contract.dateDeFin)}</span>
+                        </div>
+                    </div>
+                    ${
+                        isActive?`
+                        <div class="time-remaining">
+                            <svg data-lucide="timer"></svg>
+                            Temps restant : ${timeRemaining}
+                        </div>`:''
+                    }
+                    <div class="weekly-stats">
+                        <div class="stats-title">
+                            <svg data-lucide="bar-chart-2"></svg>
+                            Statistiques hebdomadaires
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <svg data-lucide="clock"></svg>
+                                    Heures prévues
+                                </span>
+                                <span class="info-value">${contract.NombreHeuresParSemaine}h</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">
+                                    <svg data-lucide="dollar-sign"></svg>
+                                    Salaire hebdomadaire estimé
+                                </span>
+                                <span class="info-value">${calculateWeeklySalary(contract, hourlyRate)}$</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${
+                        contract.pdfUrl?`
+                        <a href="${contract.pdfUrl}" target="_blank" class="contract-pdf-link">
+                            <i class="fas fa-file-pdf"></i>
+                            Voir le contrat
+                        </a>`:`<div style="margin-top:10px; color:#666;">Aucun PDF de contrat disponible</div>`
+                    }
+                </div>
+            </div>`;
+            lucide.createIcons();
+        }
 
-uploadBtn.onclick = function() {
-resetDocumentErrors();
-if (validateDocumentForm()) {
-const file = fileInput.files[0];
-const docName = docNameInput.value.trim();
-const docType = document.querySelector('input[name="docType"]:checked').value;
+        // ----- Paiements -----
+        let payments=[];
+        function renderPayments(paymentsArr) {
+            payments=paymentsArr;
+            const container=document.getElementById('paymentList');
+            if(!payments||payments.length===0){
+                container.innerHTML='<div style="text-align:center; padding:20px; color:#666;">Aucun paiement enregistré</div>';
+                document.getElementById('paymentsSummary').style.display='none';
+                return;
+            }
+            // Calcul du total payé
+            const totalPaid=payments
+                .filter(p=>p.statut===true)
+                .reduce((sum,p)=>sum+p.montant,0);
+            document.getElementById('paymentsSummary').style.display='flex';
+            document.getElementById('totalPaid').textContent=totalPaid.toFixed(2);
 
-showDocumentsMessage('Upload en cours...', 'info');
+            container.innerHTML=payments.map(payment=>`
+                <div class="payment-item payment-row" data-client="${(payment.client || '').toLowerCase()}">
+                    <div class="payment-info">
+                        <div class="payment-date">
+                            <svg data-lucide="calendar"></svg>
+                            Date : ${formatDate(payment.dateDePaiement)}
+                        </div>
+                        <div class="payment-amount">
+                            <svg data-lucide="dollar-sign"></svg>
+                            Montant : ${payment.montant} $
+                        </div>
+                        <div class="payment-hours">
+                            <svg data-lucide="clock"></svg>
+                            Nombre d'heures : ${payment.nombredheure}h
+                        </div>
+                        <div class="status-badge ${payment.statut?'status-paid':'status-pending'}">
+                            ${
+                                payment.statut
+                                ?'<svg data-lucide="check-circle"></svg> Payé'
+                                :'<svg data-lucide="clock"></svg> À venir'
+                            }
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        ${
+                            payment.preuveDePaiement
+                            ? `<button onclick="viewProof('${payment.preuveDePaiement}')" class="proof-btn">
+                                <svg data-lucide="eye"></svg>
+                                Voir la preuve
+                               </button>`
+                            : `<button class="proof-btn no-proof" disabled>
+                                <svg data-lucide="x-circle"></svg>
+                                Aucune preuve
+                               </button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+        function viewProof(url){
+            window.open(url,'_blank');
+        }
 
-uploadFileToServer(file, docName, docType)
-.then(response => {
-    showDocumentsMessage('Document uploadé avec succès', 'success');
-    resetDocumentForm();
-    window.parent.postMessage({type:'getDocuments'}, '*');
-})
-.catch(error => {
-    console.error('Erreur lors de l\'upload:', error);
-    showDocumentsMessage('Erreur lors de l\'upload du document', 'error');
-});
-}
-};
+        // Filtrage / recherche sur la liste de paiements
+        const searchPaymentsInput=document.getElementById('searchPaymentsInput');
+        searchPaymentsInput.addEventListener('input',function(){
+            const val=this.value.toLowerCase();
+            document.querySelectorAll('.payment-row').forEach(row=>{
+                const clientAttr=row.getAttribute('data-client')||'';
+                row.style.display=(clientAttr.includes(val))?'grid':'none';
+            });
+        });
 
-function updateDocumentsList(documents) {
-console.log('Documents mis à jour :', documents);
-// Implémentez l'affichage des documents si besoin.
-}
-
-function formatDate(date) {
-if(!date) return 'N/A';
-return new Date(date).toLocaleDateString('fr-FR');
-}
-
-function calculateTimeRemaining(endDate) {
-if(!endDate) return 'N/A';
-const now = new Date();
-const end = new Date(endDate);
-const diffDays = Math.ceil((end - now) / (1000*60*60*24));
-return diffDays > 0 ? `${diffDays} jours` : 'Contrat terminé';
-}
-
-function calculateDuration(startDate, endDate) {
-if(!startDate || !endDate) return 'N/A';
-const start = new Date(startDate);
-const end = new Date(endDate);
-const diffDays = Math.ceil((end - start) / (1000*60*60*24));
-return `${diffDays} jours`;
-}
-
-function calculateWeeklySalary(contract, hourlyRate) {
-if(!contract || !hourlyRate) return 'N/A';
-return contract.NombreHeuresParSemaine * hourlyRate;
-}
-
-// Contrats
-function renderContract(contract, hourlyRate) {
-const container = document.getElementById('contractContent');
-if (!contract) {
-container.innerHTML = `
-<div style="text-align: center; padding: 20px; color: #666;">
-    <svg data-lucide="alert-circle"></svg>
-    Vous n'avez pas de contrat actuellement.
-</div>`;
-lucide.createIcons(); 
-return;
-}
-
-const timeRemaining = calculateTimeRemaining(contract.dateDeFin);
-const isActive = new Date(contract.dateDeFin) > new Date();
-
-container.innerHTML = `
-<div id="contractInfo" style="position: relative;">
-<div class="contract-status">
-    <div class="status-indicator ${isActive ? 'active' : 'inactive'}"></div>
-    <span>
-        <svg data-lucide="${isActive ? 'check-circle' : 'x-circle'}"></svg>
-        ${isActive ? 'Contrat actif' : 'Contrat terminé'}
-    </span>
-</div>
-
-<div class="contract-info">
-    <div class="info-grid">
-        <div class="info-item">
-            <span class="info-label">
-                <svg data-lucide="calendar"></svg>
-                Date de début
-            </span>
-            <span class="info-value">${formatDate(contract.dateDeDebut)}</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">
-                <svg data-lucide="calendar"></svg>
-                Date de fin
-            </span>
-            <span class="info-value">${formatDate(contract.dateDeFin)}</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">
-                <svg data-lucide="clock"></svg>
-                Heures par semaine
-            </span>
-            <span class="info-value">${contract.NombreHeuresParSemaine}h</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">
-                <svg data-lucide="hourglass"></svg>
-                Durée totale
-            </span>
-            <span class="info-value">${calculateDuration(contract.dateDeDebut, contract.dateDeFin)}</span>
-        </div>
-    </div>
-
-    ${isActive ? `
-        <div class="time-remaining">
-            <svg data-lucide="timer"></svg>
-            Temps restant : ${timeRemaining}
-        </div>
-    ` : ''}
-
-    <div class="weekly-stats">
-        <div class="stats-title">
-            <svg data-lucide="bar-chart-2"></svg>
-            Statistiques hebdomadaires
-        </div>
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">
-                    <svg data-lucide="clock"></svg>
-                    Heures prévues
-                </span>
-                <span class="info-value">${contract.NombreHeuresParSemaine}h</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">
-                    <svg data-lucide="dollar-sign"></svg>
-                    Salaire hebdomadaire estimé
-                </span>
-                <span class="info-value">${calculateWeeklySalary(contract, hourlyRate)}$</span>
-            </div>
-        </div>
-    </div>
-
-    ${contract.pdfUrl ? `
-        <a href="${contract.pdfUrl}" target="_blank" class="contract-pdf-link">
-            <i class="fas fa-file-pdf"></i>
-            Voir le contrat
-        </a>
-    ` : `
-        <div style="margin-top:10px; color:#666;">Aucun PDF de contrat disponible</div>
-    `}
-</div>
-</div>
-`;
-
-lucide.createIcons();
-}
-
-function renderContractChart(contract) {
-const ctx = document.getElementById('contractChart').getContext('2d');
-const data = {
-labels: ['Heures prévues/semaine'],
-datasets: [{
-data: [contract.NombreHeuresParSemaine],
-backgroundColor: ['#1a237e'],
-}]
-};
-new Chart(ctx, {
-type: 'doughnut',
-data: data,
-options: { responsive: true, maintainAspectRatio: false }
-});
-}
-
-// Paiements
-function renderPayments(paymentsArr) {
-payments = paymentsArr;
-const container = document.getElementById('paymentList');
-if (!payments || payments.length === 0) {
-container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Aucun paiement enregistré</div>';
-return;
-}
-
-// Calcul du total payé
-const totalPaid = payments
-.filter(p => p.statut === true)
-.reduce((sum, p) => sum + p.montant, 0);
-
-document.getElementById('paymentsSummary').style.display = 'flex';
-document.getElementById('totalPaid').textContent = totalPaid.toFixed(2);
-
-container.innerHTML = payments.map(payment => `
-<div class="payment-item">
-<div class="payment-info">
-<div class="payment-date">
-<svg data-lucide="calendar"></svg>
-Date : ${formatDate(payment.dateDePaiement)}
-</div>
-<div class="payment-amount">
-<svg data-lucide="dollar-sign"></svg>
-Montant : ${payment.montant} $
-</div>
-<div class="payment-hours">
-<svg data-lucide="clock"></svg>
-Nombre d'heures : ${payment.nombredheure}h
-</div>
-<div class="status-badge ${payment.statut ? 'status-paid' : 'status-pending'}">
-${payment.statut ? '<svg data-lucide="check-circle"></svg> Payé' : '<svg data-lucide="clock"></svg> À venir'}
-</div>
-</div>
-<div style="text-align: right;">
-${payment.preuveDePaiement ? `
-<button onclick="viewProof('${payment.preuveDePaiement}')" class="proof-btn">
-<svg data-lucide="eye"></svg>
-Voir la preuve
-</button>
-` : `
-<button class="proof-btn no-proof" disabled>
-<svg data-lucide="x-circle"></svg>
-Aucune preuve
-</button>
-`}
-</div>
-</div>
-`).join('');
-
-lucide.createIcons();
-}
-
-function showPaymentChart(paymentId) {
-const payment = payments.find(p => p._id === paymentId);
-document.getElementById('paymentChart').style.display = 'block';
-renderPaymentChart(payment);
-}
-
-function hidePaymentChart() {
-document.getElementById('paymentChart').style.display = 'none';
-}
-
-function renderPaymentChart(payment) {
-const ctx = document.getElementById('paymentChart').getContext('2d');
-const data = {
-labels: ['Montant payé', 'Heures travaillées'],
-datasets: [{
-data: [payment.montant, payment.nombredheure],
-backgroundColor: ['#2e7d32', '#81c784'],
-}]
-};
-new Chart(ctx, {
-type: 'bar',
-data: data,
-options: { responsive: true, maintainAspectRatio: false }
-});
-}
-
-function viewProof(url) {
-window.open(url, '_blank');
-}
-
-window.addEventListener('message', function(event) {
-const data = event.data;
-console.log('Message reçu:', data);
-switch(data.type) {
-case 'employeeData':
-if (window.employeeCardUpdate) {
-    window.employeeCardUpdate(data.employee);
-}
-break;
-case 'updateSuccess':
-if (window.employeeCardSuccess) {
-    window.employeeCardSuccess();
-}
-break;
-case 'updateError':
-if (window.employeeCardError) {
-    window.employeeCardError(data.message);
-}
-break;
-case 'documentData':
-case 'documentsData':
-updateDocumentsList(data.documents);
-break;
-case 'paymentData':
-renderPayments(data.payments);
-break;
-case 'contractData':
-renderContract(data.contract, data.hourlyRate);
-break;
-case 'uploadResponse':
-if (data.success) {
-    console.log('Upload réussi:', data.response);
-    showDocumentsMessage('Document uploadé avec succès', 'success');
-    resetDocumentForm();
-    window.parent.postMessage({type:'getDocuments'}, '*');
-} else {
-    console.error('Erreur lors de l\'upload:', data.error);
-    showDocumentsMessage('Erreur lors de l\'upload du document', 'error');
-}
-break;
-case 'contractEndAlert':
-alert(data.message);
-break;
-}
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-lucide.createIcons();
-});
-</script>
+        // ----- Ecoute des messages postMessage -----
+        window.addEventListener('message', function(event){
+            const data=event.data;
+            console.log('Message reçu:', data);
+            switch(data.type){
+                case 'employeeData':
+                    if(window.employeeCardUpdate){
+                        window.employeeCardUpdate(data.employee);
+                    }
+                    break;
+                case 'updateSuccess':
+                    if(window.employeeCardSuccess){
+                        window.employeeCardSuccess();
+                    }
+                    break;
+                case 'updateError':
+                    if(window.employeeCardError){
+                        window.employeeCardError(data.message);
+                    }
+                    break;
+                case 'documentData':
+                case 'documentsData':
+                    updateDocumentsList(data.documents);
+                    break;
+                case 'paymentData':
+                    renderPayments(data.payments);
+                    break;
+                case 'contractData':
+                    renderContract(data.contract, data.hourlyRate);
+                    break;
+                case 'uploadResponse':
+                    if(data.success){
+                        console.log('Upload réussi:', data.response);
+                        showDocumentsMessage('Document uploadé avec succès','success');
+                        resetDocumentForm();
+                        window.parent.postMessage({type:'getDocuments'}, '*');
+                    } else {
+                        console.error('Erreur lors de l\'upload:', data.error);
+                        showDocumentsMessage('Erreur lors de l\'upload du document','error');
+                    }
+                    break;
+                case 'contractEndAlert':
+                    alert(data.message);
+                    break;
+            }
+        });
+        // Initialiser lucide
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+    </script>
 </body>
 </html>
-
