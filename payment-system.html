@@ -961,7 +961,25 @@
                                 }
                             </div>
                         </td>
-                        <td>${formatValue(data.services[0].description)}</td>
+                        <td>
+                            <div class="service-types-container">
+                                <span class="description-display">
+                                    ${formatValue(data.services[0].description || '-').split(' ').slice(0, 4).join(' ')}
+                                    ${data.services[0].description && data.services[0].description.split(' ').length > 4 ? '...' : ''}
+                                </span>
+                                ${
+                                    data.services[0].description
+                                    ? `
+                                        <div class="service-types-popup">
+                                            <div class="description-full">
+                                                ${formatValue(data.services[0].description)}
+                                            </div>
+                                        </div>
+                                      `
+                                    : ''
+                                }
+                            </div>
+                        </td>
                         <td>${formatValue(data.client)}</td>
                         <td>${formatValue(data.services[0].unitPrice, '0.00')}</td>
                         <td>${formatValue(data.total, '0.00')}</td>
