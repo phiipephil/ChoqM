@@ -488,9 +488,9 @@
             <a href="talent-payment.html" class="btn btn-primary" style="padding:12px 20px;border-radius:6px;margin-right:10px;">
                 Accéder au système de paiement
             </a>
-            <a href="talent-payment.html?simulate=true" class="btn btn-success" style="padding:12px 20px;border-radius:6px;">
-                <i class="fas fa-robot"></i> Simuler des données
-            </a>
+            <button onclick="simulateEmployee()" class="btn btn-success" style="padding:12px 20px;border-radius:6px;">
+                <i class="fas fa-robot"></i> Simuler un employé
+            </button>
         </div>
 
         <!-- Middle section (Informations Personnelles & Documents) -->
@@ -1164,6 +1164,55 @@
         document.addEventListener("DOMContentLoaded", function() {
             lucide.createIcons();
         });
+    </script>
+
+    <script>
+        function simulateEmployee() {
+            // Générer des données aléatoires
+            const firstNames = ['Jean', 'Marie', 'Pierre', 'Sophie', 'Michel', 'Anne'];
+            const lastNames = ['Tremblay', 'Gagnon', 'Roy', 'Côté', 'Bouchard'];
+            const phones = ['514', '438', '450'];
+            
+            const randomDate = (start, end) => {
+                return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            };
+
+            // Créer un employé simulé
+            const employee = {
+                _id: Date.now().toString(),
+                Prénom: firstNames[Math.floor(Math.random() * firstNames.length)],
+                Nom: lastNames[Math.floor(Math.random() * lastNames.length)],
+                Téléphone: `${phones[Math.floor(Math.random() * phones.length)]}-${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 9000 + 1000)}`,
+                Courriel: '',
+                DateDeNaissance: randomDate(new Date(1970, 0, 1), new Date(2000, 0, 1)).toISOString(),
+                dateDeFinContrat: randomDate(new Date(2024, 0, 1), new Date(2025, 11, 31)).toISOString(),
+                'Salaire horaire': (Math.random() * 30 + 20).toFixed(2)
+            };
+            
+            // Générer le courriel basé sur le nom
+            employee.Courriel = `${employee.Prénom.toLowerCase()}.${employee.Nom.toLowerCase()}@example.com`;
+
+            // Mettre à jour l'interface
+            if (window.employeeCardUpdate) {
+                window.employeeCardUpdate(employee);
+                showMessage('Données employé simulées avec succès', 'success');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '20px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.zIndex = '9999';
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
     </script>
 </body>
 </html>
