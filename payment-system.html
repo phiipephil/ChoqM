@@ -13,21 +13,68 @@
   
   <style>
   :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #34495e;
-    --accent-color: #3498db;
-    --success-color: #27ae60;
-    --warning-color: #f1c40f;
-    --danger-color: #e74c3c;
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --accent-color: #4895ef;
+    --success-color: #4cc9f0;
+    --warning-color: #f72585;
+    --danger-color: #ff4d6d;
     --light-bg: #f8f9fa;
-    --border-radius: 8px;
+    --dark-bg: #212529;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
   }
   body {
     background-color: var(--light-bg);
     color: var(--primary-color);
+    min-height: 100vh;
+    display: flex;
   }
-  .container-fluid {
-    max-width: 1800px; margin: 0 auto; padding: 2rem;
+  
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid rgba(0,0,0,0.1);
+    padding: 2rem;
+    height: 100vh;
+    position: fixed;
+    transition: var(--transition);
+  }
+  .sidebar-header {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  .sidebar-header img {
+    height: 40px;
+    margin-bottom: 1rem;
+  }
+  .nav-link {
+    color: var(--dark-bg);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    margin-bottom: 0.5rem;
+  }
+  .nav-link:hover, .nav-link.active {
+    background: var(--light-bg);
+    color: var(--primary-color);
+  }
+  .nav-link i {
+    margin-right: 0.75rem;
+    width: 20px;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    max-width: calc(100% - 280px);
   }
   h1 {
     color: var(--primary-color); font-weight: 700; margin-bottom: 2rem;
@@ -100,14 +147,107 @@
   </style>
 </head>
 <body>
-  <div class="container-fluid py-4">
-    <h1>Système de Gestion des Paiements</h1>
-
-    <nav class="mb-4">
-      <a href="talent-payment.html" class="btn btn-outline-primary">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <img src="logo.png" alt="CHOQ Logo">
+      <h5 class="mb-0">Système de Paiement</h5>
+      <small class="text-muted">Administration</small>
+    </div>
+    
+    <nav class="nav flex-column">
+      <a class="nav-link active" href="#">
+        <i class="bi bi-grid"></i> Tableau de bord
+      </a>
+      <a class="nav-link" href="talent-payment.html">
         <i class="bi bi-person-workspace"></i> Espace Talent
       </a>
+      <a class="nav-link" href="#">
+        <i class="bi bi-file-earmark-text"></i> Factures
+      </a>
+      <a class="nav-link" href="#">
+        <i class="bi bi-gear"></i> Paramètres
+      </a>
     </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-0">Tableau de bord</h1>
+      <div class="btn-group">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">
+          <i class="bi bi-plus-circle"></i> Nouvelle facture
+        </button>
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadInvoiceModal">
+          <i class="bi bi-upload"></i> Importer
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                <i class="bi bi-currency-dollar text-primary fs-4"></i>
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-1">Total des paiements</h6>
+                <h3 class="mb-0" id="globalTotal">0.00 $</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                <i class="bi bi-check-circle text-success fs-4"></i>
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-1">Factures approuvées</h6>
+                <h3 class="mb-0" id="approvedCount">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                <i class="bi bi-clock text-warning fs-4"></i>
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-1">En attente</h6>
+                <h3 class="mb-0" id="pendingCount">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                <i class="bi bi-people text-info fs-4"></i>
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-1">Total talents</h6>
+                <h3 class="mb-0" id="talentCount">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Actions principales -->
     <div class="action-buttons mb-4">
