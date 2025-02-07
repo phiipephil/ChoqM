@@ -28,7 +28,7 @@
         .main-container {
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: auto auto auto auto;
+            grid-template-rows: auto auto auto auto; /* Removed extra row for suggestions */
             gap: clamp(10px, 2vw, 20px);
             max-width: 1200px;
             margin: 0 auto;
@@ -42,7 +42,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .middle-section, .bottom-section {
+        .middle-section, .bottom-section { /* Removed suggestion-section */
             display: grid;
             grid-template-columns: 1fr;
             gap: clamp(10px, 2vw, 20px);
@@ -51,7 +51,7 @@
         }
 
         @media (min-width: 768px) {
-            .middle-section, .bottom-section {
+            .middle-section, .bottom-section { /* Removed suggestion-section */
                 grid-template-columns: 1fr 1fr;
                 max-height: 500px;
                 overflow-y: auto;
@@ -81,7 +81,7 @@
             margin-right: 10px;
         }
 
-        .info-card { 
+        .info-card {
             background: none;
             box-shadow: none;
             padding: 0;
@@ -137,7 +137,7 @@
         }
 
         .save-btn {
-            background: #1a237e; 
+            background: #1a237e;
             color: white;
         }
 
@@ -146,7 +146,7 @@
             color: white;
         }
 
-        .edit-mode input {
+        .edit-mode input, .edit-mode select {
             width: 100%;
             padding: 8px;
             margin: 5px 0;
@@ -162,7 +162,7 @@
         }
 
         .success {
-            background: #e0e0e0; 
+            background: #e0e0e0;
             color: #333;
         }
 
@@ -297,7 +297,7 @@
         }
 
         .active {
-            background-color: #1a237e; 
+            background-color: #1a237e;
         }
 
         .inactive {
@@ -456,7 +456,7 @@
 
         .payment-amount {
             font-size: clamp(1em, 1.2vw, 1.2em);
-            color: #2e7d32; 
+            color: #2e7d32;
         }
 
         .payment-hours {
@@ -464,7 +464,7 @@
         }
 
         .proof-btn {
-            background: #1a237e; 
+            background: #1a237e;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -507,7 +507,7 @@
         }
 
         .status-paid {
-            background: #e0e0e0; 
+            background: #e0e0e0;
             color: #333;
         }
 
@@ -569,23 +569,54 @@
             max-width: 100% !important;
             height: auto !important;
         }
+
+        .simulate-data-btn {
+            position: sticky;
+            top: 10px; /* Adjust as needed */
+            z-index: 100; /* Ensure it's above other content */
+            margin-bottom: 20px; /* Add some space below the button */
+            padding: 10px 15px;
+            background-color: #4CAF50; /* Green color, adjust as desired */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .simulate-data-btn:hover {
+            background-color: #45a049;
+        }
+
+
+        .tax-info {
+            padding-left: 20px;
+            margin-top: 10px;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+
+        .tax-info .info-row {
+            margin: 5px 0;
+        }
+
+
     </style>
 </head>
 <body>
     <div class="main-container">
-
-        
+        <button id="simulateDataBtn" class="simulate-data-btn">Simuler les données</button>
 
         <!-- Informations Personnelles & Documents -->
         <div class="middle-section">
             <div class="section" id="personalInfoSection">
                 <div class="title">
                     <i class="fas fa-user"></i>
-                    Informations Personnelles
+                    Informations personnelles
                 </div>
                 <div id="root"></div>
             </div>
-            
+
             <div class="section" id="documentsSection">
                 <div class="title">
                     <i class="fas fa-file-circle-plus"></i>
@@ -679,20 +710,32 @@
                 <canvas id="paymentChart" style="display:none; width:100%; max-height:300px;"></canvas>
             </div>
         </div>
+
+        <!-- Portail d'informations générales -->
+        <div class="bottom-section">
+            <div class="section">
+                <div class="title">
+                    <i class="fas fa-info-circle"></i>
+                    Portail d'informations générales
+                </div>
+                <ul class="general-info-list">
+                    <li><i class="fas fa-book"></i> <a href="#" class="general-info-link">Politiques internes</a></li>
+                    <li><i class="fas fa-user-graduate"></i> <a href="#" class="general-info-link">Guide de l'employé</a></li>
+                    <li><i class="fas fa-address-book"></i> <a href="#" class="general-info-link">Contacts utiles - Direction CHOQ MÉDIA</a>
+                        <ul style="list-style-type: none; padding-left: 20px;">
+                            <li><i class="fas fa-users"></i> <a href="#" class="general-info-link">Département des Ressources Humaines</a></li>
+                            <li><i class="fas fa-laptop-code"></i> <a href="#" class="general-info-link">Département TI</a></li>
+                            <li><i class="fas fa-chart-line"></i> <a href="#" class="general-info-link">Département Marketing</a></li>
+                            <li><i class="fas fa-money-bill-wave"></i> <a href="#" class="general-info-link">Département Finance</a></li>
+                        </ul>
+                    </li>
+                    <li><i class="fas fa-lightbulb"></i> <a href="#" class="general-info-link suggestion-link">Suggestions & Recommandations</a></li>
+                </ul>
+            </div>
+        </div>
+
+
     </div>
-<!-- Portail d'information générale -->
-<div class="section">
-    <div class="title">
-        <i class="fas fa-info-circle"></i>
-        Portail d'Information Générale
-    </div>
-    <ul class="general-info-list">
-        <li><i class="fas fa-book"></i> <a href="#" class="general-info-link">Politiques internes</a></li>
-        <li><i class="fas fa-balance-scale"></i> <a href="#" class="general-info-link">Règlements</a></li>
-        <li><i class="fas fa-user-graduate"></i> <a href="#" class="general-info-link">Guide de l'employé</a></li>
-        <li><i class="fas fa-address-book"></i> <a href="#" class="general-info-link">Contacts utiles - Direction CHOQ MÉDIA</a></li>
-    </ul>
-</div>
 
     <!-- Script React pour la section Informations Personnelles -->
     <script type="text/babel">
@@ -701,14 +744,23 @@
             const [isEditing, setIsEditing] = React.useState(false);
             const [message, setMessage] = React.useState({ text: '', type: '' });
             const [formData, setFormData] = React.useState({
+                type: 'Contractuel', // Default value
+                titresPostes: [],
+                statut: 'Actif',
+                inscritTaxe: false,
+                NEQ: '',
+                numeroTPS: '',
+                numeroTVQ: '',
                 Prénom: '',
                 Nom: '',
                 Téléphone: '',
                 Courriel: ''
             });
+            const [showTaxInfo, setShowTaxInfo] = React.useState(false);
+
 
             React.useEffect(() => {
-                // Les données employé seront reçues via postMessage
+                // Employee data will be received via postMessage
             }, []);
 
             const showMessage = (text, type) => {
@@ -734,12 +786,21 @@
             const updateEmployee = (emp) => {
                 setEmployee(emp);
                 setFormData({
+                    type: emp.type || 'Contractuel', // Default value
+                    titresPostes: emp.titresPostes || [],
+                    statut: emp.statut || 'Actif',
+                    inscritTaxe: emp.inscritTaxe || false,
+                    NEQ: emp.NEQ || '',
+                    numeroTPS: emp.numeroTPS || '',
+                    numeroTVQ: emp.numeroTVQ || '',
                     Prénom: emp.Prénom || '',
                     Nom: emp.Nom || '',
                     Téléphone: emp.Téléphone || '',
                     Courriel: emp.Courriel || ''
                 });
+                setShowTaxInfo(emp.inscritTaxe === true); // Update tax info visibility
             };
+
 
             window.employeeCardUpdate = updateEmployee;
             window.employeeCardSuccess = () => {
@@ -749,6 +810,13 @@
             window.employeeCardError = (msg) => {
                 showMessage(msg, 'error');
             };
+
+            const handleTaxRegistrationChange = (e) => {
+                const isTaxRegistered = e.target.checked;
+                setFormData({...formData, inscritTaxe: isTaxRegistered});
+                setShowTaxInfo(isTaxRegistered); // Show/hide tax info based on checkbox
+            };
+
 
             if (!employee) return null;
 
@@ -764,115 +832,230 @@
                         <div>
                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-user"></i>
+                                    <i class="fas fa-id-card-clip"></i>
+                                    Type:
+                                </span>
+                                <span className="value">{employee.type || 'Contractuel'}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="label">
+                                    <i class="fas fa-briefcase"></i>
+                                    Titre/Poste:
+                                </span>
+                                <span className="value">{employee.titresPostes?.join(', ') || 'N/A'}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="label">
+                                    <i class="fas fa-user"></i>
                                     Prénom:
                                 </span>
                                 <span className="value">{employee.Prénom || 'N/A'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-user"></i>
+                                    <i class="fas fa-user"></i>
                                     Nom:
                                 </span>
                                 <span className="value">{employee.Nom || 'N/A'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-phone"></i>
+                                    <i class="fas fa-phone"></i>
                                     Téléphone:
                                 </span>
                                 <span className="value">{employee.Téléphone || 'N/A'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-envelope"></i>
+                                    <i class="fas fa-envelope"></i>
                                     Courriel:
                                 </span>
                                 <span className="value">{employee.Courriel || 'N/A'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-birthday-cake"></i>
-                                    Date de naissance:
+                                    <i class="fas fa-toggle-on"></i>
+                                    Statut:
                                 </span>
-                                <span className="value">{formatDate(employee.DateDeNaissance)}</span>
+                                <span className="value">{employee.statut || 'Actif'}</span>
                             </div>
-                            <div className="info-row">
+                             <div className="info-row">
                                 <span className="label">
-                                    <i className="fas fa-file-contract"></i>
-                                    Fin de contrat:
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    Inscrit à la Taxe:
                                 </span>
-                                <span className="value">{formatDate(employee.dateDeFinContrat)}</span>
+                                <span className="value">{employee.inscritTaxe ? 'Oui' : 'Non'}</span>
                             </div>
-                            <div className="info-row">
-                                <span className="label">
-                                    <i className="fas fa-dollar-sign"></i>
-                                    Salaire horaire:
-                                </span>
-                                <span className="value">{employee['Salaire horaire']} $</span>
-                            </div>
-                            <button className="edit-btn" onClick={() => setIsEditing(true)}>
-                                <i className="fas fa-edit"></i>
+                            {employee.inscritTaxe && (
+                                <div class="tax-info">
+                                    <div class="info-row">
+                                        <span class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>NEQ:</span>
+                                        <span class="value">{employee.NEQ || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>Numéro TPS:</span>
+                                        <span class="value">{employee.numeroTPS || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>Numéro TVQ:</span>
+                                        <span class="value">{employee.numeroTVQ || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            <button class="edit-btn" onClick={() => setIsEditing(true)}>
+                                <i class="fas fa-edit"></i>
                                 Modifier
                             </button>
                         </div>
                     ) : (
-                        <div>
-                            <div className="info-row">
-                                <label className="label">
-                                    <i className="fas fa-user"></i>
+                        <div class="edit-mode">
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-id-card-clip"></i>
+                                    Type:
+                                </label>
+                                <select
+                                    value={formData.type}
+                                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                                    class="edit-mode"
+                                >
+                                    <option value="Employé">Employé</option>
+                                    <option value="Contractuel">Contractuel</option>
+                                </select>
+                            </div>
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-briefcase"></i>
+                                    Titre/Poste:
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.titresPostes.join(', ')}
+                                    onChange={(e) => setFormData({...formData, titresPostes: e.target.value.split(',').map(item => item.trim())})}
+                                    class="edit-mode"
+                                    placeholder="Entrez les titres/postes (séparés par des virgules)"
+                                />
+                            </div>
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-user"></i>
                                     Prénom:
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.Prénom}
                                     onChange={(e) => setFormData({...formData, Prénom: e.target.value})}
-                                    className="edit-mode"
+                                    class="edit-mode"
                                 />
                             </div>
-                            <div className="info-row">
-                                <label className="label">
-                                    <i className="fas fa-user"></i>
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-user"></i>
                                     Nom:
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.Nom}
                                     onChange={(e) => setFormData({...formData, Nom: e.target.value})}
-                                    className="edit-mode"
+                                    class="edit-mode"
                                 />
                             </div>
-                            <div className="info-row">
-                                <label className="label">
-                                    <i className="fas fa-phone"></i>
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-phone"></i>
                                     Téléphone:
                                 </label>
                                 <input
                                     type="tel"
                                     value={formData.Téléphone}
                                     onChange={(e) => setFormData({...formData, Téléphone: e.target.value})}
-                                    className="edit-mode"
+                                    class="edit-mode"
                                 />
                             </div>
-                            <div className="info-row">
-                                <label className="label">
-                                    <i className="fas fa-envelope"></i>
+                            <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-envelope"></i>
                                     Courriel:
                                 </label>
                                 <input
                                     type="email"
                                     value={formData.Courriel}
                                     onChange={(e) => setFormData({...formData, Courriel: e.target.value})}
-                                    className="edit-mode"
+                                    class="edit-mode"
                                 />
                             </div>
+                             <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-toggle-on"></i>
+                                    Statut:
+                                </label>
+                                <select
+                                    value={formData.statut}
+                                    onChange={(e) => setFormData({...formData, statut: e.target.value})}
+                                    class="edit-mode"
+                                >
+                                    <option value="Actif">Actif</option>
+                                    <option value="Inactif">Inactif</option>
+                                </select>
+                            </div>
+                             <div class="info-row">
+                                <label class="label">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    Inscrit à la Taxe:
+                                </label>
+                                <input
+                                    type="checkbox"
+                                    id="inscritTaxe"
+                                    checked={formData.inscritTaxe}
+                                    onChange={handleTaxRegistrationChange}
+                                    style={{width: 'auto', marginRight: '5px'}}
+                                />
+                                <label htmlFor="inscritTaxe" style={{fontWeight: 'normal', display: 'inline-block', width: 'auto', minWidth: '0'}}>Oui</label>
+                            </div>
+
+                            {showTaxInfo && (
+                                <div class="tax-info">
+                                    <div class="info-row">
+                                        <label class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>NEQ:</label>
+                                        <input
+                                            type="text"
+                                            value={formData.NEQ}
+                                            onChange={(e) => setFormData({...formData, NEQ: e.target.value})}
+                                            class="edit-mode"
+                                        />
+                                    </div>
+                                    <div class="info-row">
+                                        <label class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>Numéro TPS:</label>
+                                        <input
+                                            type="text"
+                                            value={formData.numeroTPS}
+                                            onChange={(e) => setFormData({...formData, numeroTPS: e.target.value})}
+                                            class="edit-mode"
+                                            placeholder="XXXXXXXXX RTXXXX"
+                                        />
+                                    </div>
+                                    <div class="info-row">
+                                        <label class="label" style={{minWidth: '180px', textAlign: 'right', marginRight: '10px'}}>Numéro TVQ:</label>
+                                        <input
+                                            type="text"
+                                            value={formData.numeroTVQ}
+                                            onChange={(e) => setFormData({...formData, numeroTVQ: e.target.value})}
+                                            class="edit-mode"
+                                            placeholder="XXXXXXXXXX TQXXXX"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+
                             <div>
-                                <button className="save-btn" onClick={handleSave}>
-                                    <i className="fas fa-save"></i>
+                                <button class="save-btn" onClick={handleSave}>
+                                    <i class="fas fa-save"></i>
                                     Enregistrer
                                 </button>
-                                <button className="cancel-btn" onClick={() => setIsEditing(false)}>
-                                    <i className="fas fa-times-circle"></i>
+                                <button class="cancel-btn" onClick={() => setIsEditing(false)}>
+                                    <i class="fas fa-times-circle"></i>
                                     Annuler
                                 </button>
                             </div>
@@ -890,8 +1073,12 @@
         const docNameInput = document.getElementById('docName');
         const fileInput = document.getElementById('fileInput');
         const messageDiv = document.getElementById('message');
+        const simulateDataBtn = document.getElementById('simulateDataBtn');
+        const suggestionLink = document.querySelector('.suggestion-link');
+
 
         let payments = [];
+        let suggestions = []; // Array to hold suggestions data
 
         function showDocumentsMessage(text, type) {
             messageDiv.textContent = text;
@@ -1047,7 +1234,7 @@ container.innerHTML = `
     <svg data-lucide="alert-circle"></svg>
     Vous n'avez pas de contrat actuellement.
 </div>`;
-lucide.createIcons(); 
+lucide.createIcons();
 return;
 }
 
@@ -1141,22 +1328,6 @@ container.innerHTML = `
 lucide.createIcons();
 }
 
-function renderContractChart(contract) {
-const ctx = document.getElementById('contractChart').getContext('2d');
-const data = {
-labels: ['Heures prévues/semaine'],
-datasets: [{
-data: [contract.NombreHeuresParSemaine],
-backgroundColor: ['#1a237e'],
-}]
-};
-new Chart(ctx, {
-type: 'doughnut',
-data: data,
-options: { responsive: true, maintainAspectRatio: false }
-});
-}
-
 // Paiements
 function renderPayments(paymentsArr) {
 payments = paymentsArr;
@@ -1172,7 +1343,7 @@ const totalPaid = payments
 .reduce((sum, p) => sum + p.montant, 0);
 
 document.getElementById('paymentsSummary').style.display = 'flex';
-document.getElementById('totalPaid').textContent = totalPaid.toFixed(2);
+document.getElementById('totalPaid').textContent = totalPaid.toFixed(2) + ' $'; // Ajout du symbole $ et formatage mis à jour
 
 container.innerHTML = payments.map(payment => `
 <div class="payment-item">
@@ -1242,6 +1413,57 @@ function viewProof(url) {
 window.open(url, '_blank');
 }
 
+
+function simulateData() {
+    const simulatedEmployeeData = {
+        _id: 'simulatedEmployeeId',
+        type: 'Contractuel', // Default value
+        titresPostes: ['Développeur web', 'Graphiste'],
+        statut: 'Actif',
+        inscritTaxe: true,
+        NEQ: '1234567890',
+        numeroTPS: '123456789 RT0001',
+        numeroTVQ: '1234567890 TQ0001',
+        Prénom: 'John',
+        Nom: 'Doe',
+        Téléphone: '555-123-4567',
+        Courriel: 'john.doe@example.com'
+    };
+
+    const simulatedDocumentsData = [
+        { docName: 'Contrat de travail', docType: 'Contrat', uploadDate: new Date(), fileUrl: '#' },
+        { docName: 'Specimen Cheque', docType: 'Spécimen de chèque', uploadDate: new Date(), fileUrl: '#' }
+    ];
+
+    const simulatedContractData = {
+        dateDeDebut: new Date(new Date().setDate(new Date().getDate() - 30)),
+        dateDeFin: new Date(new Date().setDate(new Date().getDate() + 30)),
+        NombreHeuresParSemaine: 37.5,
+        pdfUrl: '#',
+        hourlyRate: 25
+    };
+
+    const simulatedPaymentsData = [
+        { _id: 'pay1', dateDePaiement: new Date(new Date().setDate(new Date().getDate() - 20)), montant: 1500, nombredheure: 60, preuveDePaiement: '#', statut: true },
+        { _id: 'pay2', dateDePaiement: new Date(new Date().setDate(new Date().getDate() - 5)), montant: 1200, nombredheure: 48, preuveDePaiement: '#', statut: false }
+    ];
+
+
+    window.postMessage({ type: 'employeeData', employee: simulatedEmployeeData }, '*');
+    updateDocumentsList(simulatedDocumentsData); // Directly call function, no message needed as per current code logic
+    renderContract(simulatedContractData, simulatedContractData.hourlyRate); // Directly call function
+    renderPayments(simulatedPaymentsData); // Directly call function
+}
+
+simulateDataBtn.addEventListener('click', simulateData);
+
+suggestionLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    alert("Le formulaire de suggestions s'ouvrira dans un pop-up Wix."); // Placeholder pour le pop-up Wix
+    // Dans Wix, vous configurerez ce lien pour ouvrir un pop-up avec le formulaire de suggestion.
+});
+
+
 window.addEventListener('message', function(event) {
 const data = event.data;
 console.log('Message reçu:', data);
@@ -1294,4 +1516,3 @@ lucide.createIcons();
 </script>
 </body>
 </html>
-
